@@ -1,0 +1,107 @@
+<ParentScreen1>
+  name:"parent_screen_1"
+  box_ps1:box_ps1
+  anchor_app_name:anchor_app_name
+  label_app_name:label_app_name
+
+  anchor_email_ps1:anchor_email_ps1
+  md_txt_field_email:md_txt_field_email
+
+  anchor_password:anchor_password
+  md_txt_field_password:md_txt_field_password
+  anchor_showpass:anchor_showpass
+  show_password_toggle:show_password_toggle
+
+  anchor_login:anchor_login
+  btn_login:btn_login
+  anchor_exit:anchor_exit
+  btn_exit:btn_exit
+
+
+  BoxLayout:#ParentScreen1 Box
+    id:box_ps1
+    orientation:"vertical"
+
+    AnchorLayout:#App Name
+      id:anchor_app_name
+      anchor_x:"center"
+      anchor_y:"bottom"
+      size_hint:1,None
+
+      Label:
+        id: label_app_name
+        text:"What Sticks"
+        size_hint:None,None
+        size:self.texture_size
+
+    AnchorLayout:#App Email
+      id:anchor_email_ps1
+      anchor_x:"left"
+      anchor_y:"bottom"
+      size_hint:1,None
+
+      MDTextField:
+        id:md_txt_field_email
+        hint_text:"Email"
+        icon_right:"email"
+        icon_right_color:.2,.2,.2,1
+        current_hint_text_color:.2,.2,.2,1
+        text_color:0,0,0,1
+
+    AnchorLayout:#App Password
+      id:anchor_password
+      anchor_x:"left"
+      anchor_y:"top"
+      size_hint: 1,None
+
+      MDTextField:
+        id:md_txt_field_password
+        hint_text:"Password"
+        password:True
+        icon_right_color:.2,.2,.2,1
+        current_hint_text_color:.2,.2,.2,1
+        text_color:0,0,0,1
+
+    AnchorLayout:
+      id:anchor_showpass
+      anchor_x:"right"
+      size_hint:1,None
+      height:show_password_toggle.height
+      ShowPasswordToggle:
+        id:show_password_toggle
+        text:"Show password"
+        on_press: root.show_password(self)
+
+
+    AnchorLayout:
+      id:anchor_login
+      anchor_x:"right"
+      MDFillRoundFlatButton:
+        id:btn_login
+        size_hint:.5,.35
+        text:'Login'
+        md_bg_color:.2,.2,.2,1
+        on_press:
+          root.verify_user()
+
+    AnchorLayout:
+      id:anchor_exit
+      anchor_x:"right"
+      anchor_y:"top"
+      MDFillRoundFlatButton:
+        id:btn_exit
+        text:'Exit'
+        size_hint:.25,.35
+        md_bg_color:.5,.5,.5,1
+        on_press:
+          app.stop()
+
+
+<CustomPopup>:
+  size_hint:.4,.3
+  AnchorLayout:
+    Button:
+      size_hint:.8,.4
+      text:"OK"
+      on_press:
+        root.dismiss()

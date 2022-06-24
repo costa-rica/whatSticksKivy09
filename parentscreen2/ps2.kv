@@ -1,0 +1,64 @@
+<ParentScreen2>
+  name:"parent_screen_2"
+  toolbar:toolbar
+  btn_font_size:btn_font_size
+  md_nav_layout:md_nav_layout
+  child_sm:child_sm
+  act_screen:act_screen
+  table_screen:table_screen
+
+  MDToolbar:
+    id:toolbar
+    pos_hint:{"top":1}
+    title:"What-Sticks"
+    left_action_items:[["menu", lambda x: nav_drawer.set_state("open")]]
+    md_bg_color: .3,.3,.3,1
+    AnchorLayout:
+      padding: 5
+      anchor_x:"right"
+      Button:
+        id: btn_font_size
+        text:"Adj Font"
+        size_hint:.5,1
+        on_press: root.change_app_size()
+        elevation:40
+        # background_color: .3,.8,.3,1
+        background_color: .3,.3,.3,1
+        # color: 1,.2,.2,1
+        border:15,15,15,15
+
+  MDNavigationLayout:
+    id:md_nav_layout
+
+    ScreenManager:
+      id:child_sm
+      ActivityScreen:
+        id:act_screen
+        size_hint:1,None
+        height:root.height - root.toolbar.height
+      Screen:
+        id:table_screen
+        size_hint:1,None
+        height:root.height - root.toolbar.height
+    MDNavigationDrawer:
+      id:nav_drawer
+      size_hint:.5, None
+      height:root.height - root.toolbar.height
+
+      NavMenu:
+
+
+<ActivityScreen@Screen>
+  ScrollView:
+    BoxLayout:
+      orientation:"vertical"
+      size_hint:1,None
+      height:self.minimum_height
+
+      MainBoxLayout:
+        size_hint:1,None
+        height:root.height
+
+      BoxLayout:# ExtraBoxLayout
+        size_hint:1,None
+        height:root.height *.5

@@ -1,0 +1,77 @@
+<MainBoxLayout>
+  anchor_email:anchor_email
+  label_email:label_email
+
+  box_act_name : box_act_name
+  label_act_name : label_act_name
+  input_act_name : input_act_name
+  anchor_act_name_label : anchor_act_name_label
+
+  label_act_note : label_act_note
+  input_act_note : input_act_note
+  anchor_act_note_label : anchor_act_note_label
+  box_act_note : box_act_note
+
+  anchor_date_time : anchor_date_time
+  label_date : label_date
+  input_date : input_date
+  label_time : label_time
+  input_time : input_time
+
+  anchor_submit : anchor_submit
+  btn_submit_act : btn_submit_act
+
+  orientation:"vertical"
+
+  AnchorLayout:#      Email - Screen Name
+    id: anchor_email
+    Label:
+      id: label_email
+      color: .2,.2,.2,1
+
+  BoxLayout:#          Activity Name
+    id: box_act_name
+    orientation:"vertical"
+
+    AnchorLayout:
+      id: anchor_act_name_label
+      Label:
+        id: label_act_name
+
+    TextInputAddName:
+      id: input_act_name
+
+  BoxLayout:#             Activity Note
+    id: box_act_note
+    orientation:"vertical"
+    AnchorLayout:
+      id: anchor_act_note_label
+      Label:
+        id: label_act_note
+    TextInputDynamicActNote:
+      id: input_act_note
+
+  AnchorLayout:#            Date Time
+    id: anchor_date_time
+
+    BoxLayout:
+      id: box_date_time
+
+      BoxLayout:
+        orientation: "vertical"
+        Label:
+          id: label_date
+        TextInput:
+          id: input_date
+      BoxLayout:
+        orientation:"vertical"
+        Label:
+          id: label_time
+        TextInput:
+          id: input_time
+
+  AnchorLayout:#            Submit Button
+    id: anchor_submit
+    MDFillRoundFlatButton:
+      id: btn_submit_act
+      on_press: print("Wonder Button ! ! !")
