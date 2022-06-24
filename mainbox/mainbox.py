@@ -21,7 +21,6 @@ class MainBoxLayout(BoxLayout):
     self.on_size_count = 0
     self.sc = 2 # size coeffcient
     self.bind(size=self.on_size)
-    # self.bind(children=self.size_kids)
 
   def on_size(self,*args):
     print('MainBoxLayout on_size')
@@ -42,13 +41,9 @@ class MainBoxLayout(BoxLayout):
     self.on_size_count += 1
 
   def size_kids(self,*args):
-    print('MainBoxLayout size_kids **')
-    print('self.children::', self.children)
-    # print(self.children[4].children.text)
     self.input_act_note.sc=self.sc
 
   # Act Screen Name / Email
-    # self.children[4].children.size_hint=(None,None)
     self.label_email.size_hint=(None,None)
     self.label_email.font_size=self.ps1_base_height * size_dict['label_email']['font_size'][self.sc]
     self.label_email.size= self.label_email.texture_size
