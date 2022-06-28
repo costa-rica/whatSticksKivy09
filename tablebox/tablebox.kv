@@ -8,6 +8,7 @@
   label_act_count: label_act_count
 
   box_table_base: box_table_base
+  anchor_header: anchor_header
   box_header: box_header
   btn_header_id: btn_header_id
   btn_header_date: btn_header_date
@@ -30,42 +31,56 @@
     Label:
       id: label_email_ts
       color: .2,.2,.2,1
+      # canvas.before:
+      #   Color:
+      #     rgb: [127/255,160/255,100/255]
+      #   Rectangle:
+      #     pos: self.pos
+      #     size: self.size
 
   AnchorLayout:#         Container for Table Count
     id: anchor_act_count
-    canvas.before:
-      Color:
-        rgb: [127/255,160/255,100/255]
-      Rectangle:
-        pos: self.pos
-        size: self.size
     Label:
       id:label_act_count
 
   BoxLayout:#            Container for Table
     id: box_table_base
     orientation:"vertical"
-    BoxLayout:
-      id: box_header
-      size_hint_y:None
-      height:btn_header_id.height
+    AnchorLayout:
+      id: anchor_header
       canvas.before:
         Color:
-          rgb: [200/255,100/255,100/255]
+          rgb: [25/255,25/255,25/255]
         Rectangle:
           pos: self.pos
           size: self.size
-      Button:
-        id: btn_header_id
-      Button:
-        id: btn_header_date
-      Button:
-        id: btn_header_name
-      Button:
-        id: btn_header_count
+        Color:
+          rgba: [.1,.1,.1,1]
+        # Line:
+        #   width: 20
+        #   rectangle: self.x, anchor_header.y, self.width, self.height
+        Rectangle:
+          pos: self.x, self.y
+          size: self.width, 2
+      BoxLayout:
+        id: box_header
+        Button:
+          id: btn_header_id
+        Button:
+          id: btn_header_date
+        Button:
+          id: btn_header_name
+        Button:
+          id: btn_header_count
 
     ScrollView:
       id: scroll_view
+      canvas.before:
+        Color:
+          rgb: [150/255,150/255,150/255]
+        Rectangle:
+          pos: self.pos
+          size: self.size
       GridLayout:
         id: grid_table
         size_hint_y:None
@@ -75,14 +90,19 @@
   BoxLayout:#            Container for Table Navigation
     id: box_table_nav
     orientation: "vertical"
+    canvas.before:
+      Color:
+        rgb: [.1,.1,.1,1]
+      Rectangle:
+        pos:self.x,self.top
+        size: self.width, 10
+    #   Color:
+    #     rgb: [100/255,100/255,100/255]
+    #   Rectangle:
+    #     pos: self.pos
+    #     size: self.size
     AnchorLayout:
       id: anchor_table_nav_label
-      canvas.before:
-        Color:
-          rgb: [127/255,160/255,100/255]
-        Rectangle:
-          pos: self.pos
-          size: self.size
       Label:
         id: label_table_nav
 
