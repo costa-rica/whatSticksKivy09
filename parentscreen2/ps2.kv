@@ -33,13 +33,16 @@
     ScreenManager:
       id:child_sm
       ActivityScreen:
-        id:act_screen
-        size_hint:1,None
-        height:root.height - root.toolbar.height
+        id: act_screen
+        name: "act_screen"
+        size_hint: 1,None
+        height: root.height - root.toolbar.height
       Screen:
-        id:table_screen
-        size_hint:1,None
-        height:root.height - root.toolbar.height
+        id: table_screen
+        name: "table_screen"
+        size_hint: 1,None
+        height: root.height - root.toolbar.height
+        TableBox:
     MDNavigationDrawer:
       id:nav_drawer
       size_hint:.5, None
@@ -62,3 +65,25 @@
       BoxLayout:# ExtraBoxLayout
         size_hint:1,None
         height:root.height *.5
+
+
+
+<NavMenu>
+  orientation:"vertical"
+  canvas.before:
+    Color:
+      rgb:127/255,160/255,189/255
+    Rectangle:
+      pos: self.pos
+      size: self.size
+  OneLineListItem:
+    text: "Add Activity"
+    on_press:
+      root.parent.parent.parent.child_sm.current="act_screen"
+  OneLineListItem:
+    text: "View Logged Activities"
+    on_press:
+      ps2=root.parent.parent.parent
+      ps2.child_sm.current="table_screen"
+      ps2.table_box_util()# utility for sending data to table_box
+  Label:

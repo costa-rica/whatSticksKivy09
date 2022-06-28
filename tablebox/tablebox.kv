@@ -1,0 +1,122 @@
+<TableBox>:
+  id: box_table
+
+  label_email_ts: label_email_ts
+  anchor_email_ts: anchor_email_ts
+
+  anchor_act_count: anchor_act_count
+  label_act_count: label_act_count
+
+  box_table_base: box_table_base
+  box_header: box_header
+  btn_header_id: btn_header_id
+  btn_header_date: btn_header_date
+  btn_header_name: btn_header_name
+  btn_header_count: btn_header_count
+  grid_table: grid_table
+  scroll_view: scroll_view
+
+  box_table_nav: box_table_nav
+  anchor_table_nav_label: anchor_table_nav_label
+  label_table_nav: label_table_nav
+  btn_top: btn_top
+  btn_bottom: btn_bottom
+
+  orientation:"vertical"
+
+  AnchorLayout:#         Container for Email
+    id: anchor_email_ts
+
+    Label:
+      id: label_email_ts
+      color: .2,.2,.2,1
+
+  AnchorLayout:#         Container for Table Count
+    id: anchor_act_count
+    canvas.before:
+      Color:
+        rgb: [127/255,160/255,100/255]
+      Rectangle:
+        pos: self.pos
+        size: self.size
+    Label:
+      id:label_act_count
+
+  BoxLayout:#            Container for Table
+    id: box_table_base
+    orientation:"vertical"
+    BoxLayout:
+      id: box_header
+      size_hint_y:None
+      height:btn_header_id.height
+      canvas.before:
+        Color:
+          rgb: [200/255,100/255,100/255]
+        Rectangle:
+          pos: self.pos
+          size: self.size
+      Button:
+        id: btn_header_id
+      Button:
+        id: btn_header_date
+      Button:
+        id: btn_header_name
+      Button:
+        id: btn_header_count
+
+    ScrollView:
+      id: scroll_view
+      GridLayout:
+        id: grid_table
+        size_hint_y:None
+        height:self.minimum_height
+        cols:1
+
+  BoxLayout:#            Container for Table Navigation
+    id: box_table_nav
+    orientation: "vertical"
+    AnchorLayout:
+      id: anchor_table_nav_label
+      canvas.before:
+        Color:
+          rgb: [127/255,160/255,100/255]
+        Rectangle:
+          pos: self.pos
+          size: self.size
+      Label:
+        id: label_table_nav
+
+    Button:
+      id: btn_top
+      on_press: scroll_view.scroll_y=1
+
+    Button:
+      id: btn_bottom
+      on_press: scroll_view.scroll_y=0
+
+
+
+<RowBox>
+  btn_id_rb: btn_id_rb
+  label_date_rb: label_date_rb
+  label_name_rb: label_name_rb
+  btn_delete_rb: btn_delete_rb
+  # canvas_rb: canvas_rb
+  size_hint:1,None
+  # height:btn_id_rb.height+8
+  padding:3,0,3,0
+  # canvas.before:
+  #   id: canvas_rb
+  #   Color:
+  #     rgb: [100/255,200/255,100/255]
+  #   Rectangle:
+  #     pos: self.pos
+  #     size: self.size
+  Button:
+    id:btn_id_rb
+  Label:
+    id:label_date_rb
+  Label:
+    id:label_name_rb
+  Button:
+    id:btn_delete_rb

@@ -20,7 +20,6 @@ class MainBoxLayout(BoxLayout):
     super().__init__(**kwargs)
     self.on_size_count = 0
     self.sc = 2 # size coeffcient
-    self.bind(size=self.on_size)
 
   def on_size(self,*args):
     print('MainBoxLayout on_size')
@@ -146,7 +145,6 @@ class MainBoxLayout(BoxLayout):
 
 class TextInputAddName(TextInput):
   def on_focus(instance, instance_twice, value):#I'm not sure why i'm passing instance twice
-    print('***TextInputAddName***')
     main_box =instance.parent.parent#different hiearchey than TextInputDynamicActNote
     if value:
       main_box.label_act_name.color=(0,0,0,1)
