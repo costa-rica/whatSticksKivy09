@@ -35,8 +35,8 @@ def convert_datetime(date_time_str):
         # date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%dT%H:%M:%S')
         print("""There is an error converting datetimes in
         scroll_table_data.py or with API call to kivy_table01""")
-    # return date_time_obj.strftime("%m/%d/%Y, %H:%M:%S")
-    return date_time_obj.strftime("%b%-d '%-y %-I:%M%p")#<------Potential hangup!***************!
+    return date_time_obj.strftime("%m/%d/%Y %-I:%M %p")
+    # return date_time_obj.strftime("%b%-d '%-y %-I:%M%p")
 
 def make_date_string(date_time_str):
     date_time_obj = datetime.datetime.strptime(date_time_str, '%a, %d %b %Y %H:%M:%S %Z')

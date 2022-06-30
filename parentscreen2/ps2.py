@@ -47,6 +47,7 @@ class ParentScreen2(Screen):
     self.main_box.ps1_base_width=self.parent.ps1_base_width
     self.main_box.ps1_base_height=self.parent.ps1_base_height
     self.main_box.size_kids()
+
     # Clock.schedule_once(self.main_box.size_kids(), 2)
 
 
@@ -72,3 +73,13 @@ class ParentScreen2(Screen):
       self.btn_font_size.background_color=(.6,.6,.9)
     self.sc_tracker+=1
     self.main_box.size_kids()
+    # print('self.table_box:', self.table_box)
+    # print(dir(self.table_box))
+    try:
+    # if isinstance(self.table_box, TableBox):
+      # print(dir(self))
+      self.table_box.sc =  self.main_box.sc
+      # self.table_box.resize_util()
+      self.table_box.size_content_util()
+    except AttributeError:
+      print('no table_box object yet')
