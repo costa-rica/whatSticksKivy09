@@ -10,6 +10,8 @@ from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 
 from kivy.graphics import Color, Rectangle
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.button import MDFlatButton
 import time
 
 Builder.load_file('tablebox/tablebox.kv')
@@ -17,6 +19,22 @@ Builder.load_file('tablebox/tablebox.kv')
 
 class RowBox(BoxLayout):...
 
+# class RowCountDialogContent(BoxLayout):
+#   def __init__(self, **kwargs):
+#     super().__init__(**kwargs)
+#     self.orientation = "vertical"
+#     # self.size_hint_y = None
+#     # self.height = 100
+#
+#
+#   def on_size(self, *args):
+#     print('RowCountDialogContent on_size')
+#     print('self.parent:', self.parent)
+#     print('self.parent.parrent:', self.parent.parent)
+#     dialog_box = self.parent.parent.parent
+#     print(dir(dialog_box))
+#     print('dialog_box.parent:', dialog_box.parent)
+#     print('dialog_box.get_parent_window:', dialog_box.get_parent_window)
 
 class TableBox(BoxLayout):
   ps1_base_width=ObjectProperty(0)
@@ -34,7 +52,9 @@ class TableBox(BoxLayout):
     self.id_sort_counter = 0
     self.date_sort_counter = 0
     self.name_sort_counter = 0
-    self.act_count_counter = 0
+    self.row_number_trigger = 0
+
+    self.dialog_rows = None
 
   def on_size(self,*args):
     print('****   TableBox on_size: ', self.on_size_count)
@@ -100,7 +120,8 @@ class TableBox(BoxLayout):
     self.btn_header_name.height = self.ps1_base_height * .095###
     self.btn_header_count.height = self.ps1_base_height * .095###
 
-  # Table Contents I ##################################################
+  # Table Rows I ##################################################
+    self.row_data_filtered = self.row_data_list[-20:]
     self.build_rows_util()
 
   #Nav Buttons I
@@ -113,11 +134,11 @@ class TableBox(BoxLayout):
     self.btn_top.font_size = self.ps1_base_width * .06###
     self.btn_bottom.font_size = self.ps1_base_width * .06###
 
-    Clock.schedule_once(self.get_size, .01)
+    Clock.schedule_once(self.size_kids_continuted, .01)
 
 
-  def get_size(self,*args):
-    print('-- TableBox get_size --')
+  def size_kids_continuted(self,*args):
+    print('-- TableBox size_kids_continuted --')
 
   # Email / Screen Name II
     while self.label_email_ts.texture_size[1] > (self.anchor_email_ts.height * .95) or \
@@ -135,7 +156,6 @@ class TableBox(BoxLayout):
 
     self.label_act_count.size = self.label_act_count.texture_size
 
-
   # Table Headers II
     self.box_header_width = .975###
     self.btn_header_id.width = self.ps1_base_width * (self.box_header_width * .2)
@@ -151,12 +171,10 @@ class TableBox(BoxLayout):
     self.btn_header_name.font_size = self.btn_header_font_size
 
   # Assign sorting Buttons
-    self.btn_header_id.bind(on_press=self.sort_by_util)
-    self.btn_header_date.bind(on_press=self.sort_by_util)
-    self.btn_header_name.bind(on_press=self.sort_by_util)
-    self.btn_header_count.bind(on_press=self.act_count_util)
-
-
+    self.btn_header_id.bind(on_press=self.sort_process_util)
+    self.btn_header_date.bind(on_press=self.sort_process_util)
+    self.btn_header_name.bind(on_press=self.sort_process_util)
+    self.btn_header_count.bind(on_press=self.number_of_rows_process_util)
 
     self.box_header.size_hint_x = None
     self.box_header.width = self.ps1_base_width * self.box_header_width
@@ -173,10 +191,9 @@ class TableBox(BoxLayout):
     #   Color(.1, .1, .1, 1)
     #   Rectangle(pos=(self.box_header.pos[0],self.box_header.pos[1]-4), size=(self.ps1_base_width,6))
 
-  # Table Content II
+  # Table Rows II
     self.grid_table.padding = (self.ps1_base_width * .0118,0,0,0)
-    self.size_content_util()
-
+    self.size_rows_util()
 
   #Nav buttons II
     self.label_table_nav.size = self.label_table_nav.texture_size
@@ -201,9 +218,9 @@ class TableBox(BoxLayout):
     self.box_table_base.height = self.height - (self.anchor_email_ts.height + \
       self.anchor_act_count.height + self.box_table_nav.height)
 
-    Clock.schedule_once(self.make_frame, .01)
+    Clock.schedule_once(self.make_rows_frame, .01)
 
-  def make_frame(self,*args):
+  def make_rows_frame(self,*args):
     # print('self.scroll_view.x;::', self.scroll_view.x)
     with self.scroll_view.canvas.before:
       Color(.3,.3,.3)
@@ -216,117 +233,8 @@ class TableBox(BoxLayout):
   def build_rows_util(self):
     self.rowbox_dict={}
 
-    if self.act_count_counter == 0:
-      row_data = self.row_data_list[-20:]
-    else:
-      self.grid_table.clear_widgets()
-      row_data = self.row_data_filtered
-
-    for i in row_data:
-      rowbox = RowBox()
-      rowbox.size_hint_y=None
-      rowbox.height = self.ps1_base_height * size_dict['rowbox']['height'][self.sc]
-
-      rowbox.btn_id_rb.text=i[0]
-      rowbox.label_date_rb.text=i[1]
-      rowbox.label_name_rb.text=i[2]
-      rowbox.btn_delete_rb.name=i[0]
-      rowbox.btn_delete_rb.text='delete'
-      rowbox.btn_delete_rb.bind(on_press=self.delete_row)
-
-      self.rowbox_dict[i[0]]=rowbox
-      self.grid_table.add_widget(rowbox)
-
-    self.label_act_count.text = f"Activities Count: {len(self.rowbox_dict)}"
-
-
-
-  def sort_by_util(self, widget):
-    print('widget:', widget.text)
-    print('widget.background_color:::', widget.background_color)
-
-    self.grid_table.clear_widgets()
-    self.rowbox_dict={}
-
     row_data = self.row_data_filtered
 
-    if widget.text[:2]=='ID':
-
-      if self.id_sort_counter % 3 == 0:# ascending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'ID\nascending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[0])
-      elif self.id_sort_counter % 3 == 1:# descending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'ID\ndescending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[0], reverse = True)
-      elif self.id_sort_counter % 3 == 2:# no sort
-        widget.background_color = (1,1,1,1)
-        widget.text = 'ID'
-        row_data.sort(key=lambda k: k[4])
-      #### Clear other buttons
-      self.btn_header_date.background_color = (1,1,1,1)
-      self.btn_header_date.text = 'Date/Time'
-      self.btn_header_name.background_color = (1,1,1,1)
-      self.btn_header_name.text = 'Acitivity Name'
-      self.name_sort_counter=0
-      self.date_sort_counter = 0
-      self.id_sort_counter += 1
-
-    elif widget.text[:2]=='Da':
-
-      if self.date_sort_counter % 3 == 0:# ascending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'Date\Time\nascending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[3])
-      elif self.date_sort_counter % 3 == 1:# descending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'Date\Time\ndescending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[3], reverse = True)
-      elif self.date_sort_counter % 3 == 2:# no sort
-        widget.background_color = (1,1,1,1)
-        widget.text = 'Date\Time'
-        row_data.sort(key=lambda k: k[4])
-      #### Clear other buttons
-      self.btn_header_id.background_color = (1,1,1,1)
-      self.btn_header_id.text = 'ID'
-      self.btn_header_name.background_color = (1,1,1,1)
-      self.btn_header_name.text = 'Acitivity Name'
-      self.name_sort_counter=0
-      self.id_sort_counter = 0
-
-      self.date_sort_counter += 1
-
-    elif widget.text[:2]=='Ac':
-
-      if self.name_sort_counter % 3 == 0:# ascending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'Activity Name\nascending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[3])
-      elif self.name_sort_counter % 3 == 1:# descending
-        widget.background_color = (.45,.55,.8,1)
-        widget.text = 'Activity Name\ndescending'
-        widget.halign = 'center'
-        row_data.sort(key=lambda k: k[3], reverse = True)
-      elif self.name_sort_counter % 3 == 2:# no sort
-        widget.background_color = (1,1,1,1)
-        widget.text = 'Activity Name'
-        row_data.sort(key=lambda k: k[4])
-      #### Clear other buttons
-      self.btn_header_id.background_color = (1,1,1,1)
-      self.btn_header_id.text = 'ID'
-      self.btn_header_date.background_color = (1,1,1,1)
-      self.btn_header_date.text = 'Date/Time'
-      self.date_sort_counter=0
-      self.id_sort_counter = 0
-
-      self.name_sort_counter += 1
-
     for i in row_data:
       rowbox = RowBox()
       rowbox.size_hint_y=None
@@ -343,10 +251,9 @@ class TableBox(BoxLayout):
       self.grid_table.add_widget(rowbox)
 
     self.label_act_count.text = f"Activities Count: {len(self.rowbox_dict)}"
-    self.size_content_util()
 
 
-  def size_content_util(self):
+  def size_rows_util(self):
     for counter, (i,rowbox) in enumerate(self.rowbox_dict.items()):
       # -> Needs to be in size_dict <-
 
@@ -378,19 +285,64 @@ class TableBox(BoxLayout):
       #   Rectangle(pos=(rowbox.pos[0]+rowbox_padding,rowbox.pos[1]), size=(self.ps1_base_width * self.box_header_width,3))
 
 
-  def act_count_util(self, widget):
-    print('self.act_count_counter:::', self.act_count_counter)
-    self.act_count_counter += 1
-    if self.act_count_counter % 3 == 0:
+
+  def get_dialog_parent(self, widget):
+    print('CANCEL button')
+    print(self.parent)
+    print(self.dialog_rows)
+    print('what is the widget::', widget)
+
+  def get_dialog_data(self, widget):
+    print('OK button')
+    # print('widget.children:', widget.children[0].children)
+    print('self.dialog_rows.content_cls:',self.dialog_rows.content_cls)
+    print('self.dialog_rows.content_cls.text_count:',self.dialog_rows.content_cls.text_count)
+    # print(dir(self.dialog_rows.content_cls.text_count))
+    print('self.dialog_rows.content_cls.text_count.text:::', self.dialog_rows.content_cls.text_count.text)
+
+  def set_number_of_rows_util(self, widget):
+
+    #only change number of rows if Row button calls this util
+    if widget.text[:2]=='Ro':
+      print(f'{widget.text} called set_number_of_rows_util ----')
+      self.row_number_trigger += 1
+
+    if self.row_number_trigger % 3 == 0:
       self.row_data_filtered = self.row_data_list[-20:]
-    elif self.act_count_counter % 3 ==1:
+    elif self.row_number_trigger % 3 == 1:
       self.row_data_filtered = self.row_data_list[-50:]
-    elif self.act_count_counter % 3 ==2:
-      self.row_darta_filtered = self.row_data_list
+    elif self.row_number_trigger % 3 == 2:
+      self.row_data_filtered = self.row_data_list[-100:]
+      #Make popup that offeres;
+        # 1) Show This many
+        # 2)show all
+        # 3) Keep what i have
+      # if not self.dialog_rows:
+      #   self.dialog_rows = MDDialog(
+      #     title = "Enter Number of rows to see:",
+      #     type = 'custom',
+      #     buttons = [ MDFlatButton(
+      #                             text="CANCEL",
+      #                             theme_text_color="Custom",
+      #                             text_color=(.3,.3,.3,1),
+      #                             on_press = self.get_dialog_parent
+      #                         ),
+      #                         MDFlatButton(
+      #                             text="OK",
+      #                             theme_text_color="Custom",
+      #                             text_color=(.3,.3,.3,1),
+      #                             on_press= self.get_dialog_data
+      #                             # on_press=self.get_dialog_parent()
+      #                         )],
+      #
+      #     content_cls = RowCountDialogContent()
+      #   )
+      #   self.dialog_rows.open()
+
+      # self.row_data_filtered = self.row_data_list
 
     self.label_act_count.text = f'Activities Count: {len(self.row_data_filtered)}'
 
-    self.build_rows_util()
 
   def delete_row(self, widget):
     print('delte row')
@@ -407,8 +359,7 @@ class TableBox(BoxLayout):
 
 
   def text_fitter_content_util(self, thing):
-    # # is there room for two lines in button / label ---> if yes split into rows:
-
+  # # is there room for two lines in button / label ---> if yes split into rows:
     if thing.text.find(" ", round(len(thing.text)/2)) > 0 and thing.text.find("\n")==-1 :
       space_character = thing.text.find(" ", round(len(thing.text)/2))
       new_string_list = list(thing.text)
@@ -428,6 +379,7 @@ class TableBox(BoxLayout):
         thing.font_size -= .5
         thing.texture_update()
 
+
     else:
       while thing.texture_size[1] < thing.height *.8 and \
         thing.texture_size[0] < thing.width * .8 and \
@@ -440,6 +392,137 @@ class TableBox(BoxLayout):
         thing.font_size > self.max_font_size:
         thing.font_size -= .5
         thing.texture_update()
-
+  # Set max_font_size
     if self.max_font_size == 0:
       self.max_font_size = thing.font_size * 1.5
+
+
+  def sort_by_util(self, widget):
+    print(f'--- sort_by_util called by {widget.text} ---')
+
+    self.rowbox_dict={}
+
+    row_data = self.row_data_filtered
+
+    if widget.text[:2]=='ID':
+      print('****** We should be getting in this IF statement****')
+      if self.id_sort_counter % 3 == 0:# ascending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'ID\nascending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[0])
+      elif self.id_sort_counter % 3 == 1:# descending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'ID\ndescending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[0], reverse = True)
+      elif self.id_sort_counter % 3 == 2:# no sort
+        widget.background_color = (1,1,1,1)
+        widget.text = 'ID'
+        row_data.sort(key=lambda k: k[4])
+
+    # Clear other buttons
+      self.btn_header_date.background_color = (1,1,1,1)
+      self.btn_header_date.text = 'Date/Time'
+      self.btn_header_name.background_color = (1,1,1,1)
+      self.btn_header_name.text = 'Acitivity Name'
+      self.name_sort_counter=0
+      self.date_sort_counter = 0
+      self.id_sort_counter += 1
+
+
+
+    elif widget.text[:2]=='Da':
+      if self.date_sort_counter % 3 == 0:# ascending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'Date\Time\nascending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[3])
+      elif self.date_sort_counter % 3 == 1:# descending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'Date\Time\ndescending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[3], reverse = True)
+      elif self.date_sort_counter % 3 == 2:# no sort
+        widget.background_color = (1,1,1,1)
+        widget.text = 'Date\Time'
+        row_data.sort(key=lambda k: k[4])
+    # Clear other buttons
+      self.btn_header_id.background_color = (1,1,1,1)
+      self.btn_header_id.text = 'ID'
+      self.btn_header_name.background_color = (1,1,1,1)
+      self.btn_header_name.text = 'Acitivity Name'
+      self.name_sort_counter=0
+      self.id_sort_counter = 0
+
+      self.date_sort_counter += 1
+
+    elif widget.text[:2]=='Ac':
+
+      if self.name_sort_counter % 3 == 0:# ascending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'Activity Name\nascending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[3])
+      elif self.name_sort_counter % 3 == 1:# descending
+        widget.background_color = (.45,.55,.8,1)
+        widget.text = 'Activity Name\ndescending'
+        widget.halign = 'center'
+        row_data.sort(key=lambda k: k[3], reverse = True)
+      elif self.name_sort_counter % 3 == 2:# no sort
+        widget.background_color = (1,1,1,1)
+        widget.text = 'Activity Name'
+        row_data.sort(key=lambda k: k[4])
+    # Clear other buttons
+      self.btn_header_id.background_color = (1,1,1,1)
+      self.btn_header_id.text = 'ID'
+      self.btn_header_date.background_color = (1,1,1,1)
+      self.btn_header_date.text = 'Date/Time'
+      self.date_sort_counter=0
+      self.id_sort_counter = 0
+
+      self.name_sort_counter += 1
+
+
+
+  def sort_process_util(self, widget):
+    print('ID header button was pressed')
+    print('Now in sort_id_process_util')
+
+  # instantiate  self.row_data_filtered
+    self.set_number_of_rows_util(widget)
+
+  # clear grid_table widgets
+    self.grid_table.clear_widgets()
+
+    self.sort_by_util(widget)
+
+  # Buiild Rows
+    self.build_rows_util()
+
+  # Size rows
+    self.size_rows_util()
+
+
+  def number_of_rows_process_util(self, widget):
+    self.set_number_of_rows_util(widget)
+
+  # clear grid_table widgets
+    self.grid_table.clear_widgets()
+
+  # Clears all sort
+    self.btn_header_id.background_color = (1,1,1,1)
+    self.btn_header_id.text = 'ID'
+    self.btn_header_date.background_color = (1,1,1,1)
+    self.btn_header_date.text = 'Date/Time'
+    self.btn_header_name.background_color = (1,1,1,1)
+    self.btn_header_name.text = 'Acitivity Name'
+    self.id_sort_counter = 0
+    self.name_sort_counter = 0
+    self.date_sort_counter = 0
+
+  # Buiild Rows
+    self.build_rows_util()
+
+  # Size rows
+    self.size_rows_util()

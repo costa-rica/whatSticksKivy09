@@ -83,6 +83,7 @@
   OneLineListItem:
     text: "View Logged Activities"
     on_press:
+      print('pressed Nav menu to enter table_screen  --------')
       ps2=root.parent.parent.parent
       ps2.child_sm.current="table_screen"
       ps2.table_box_util()# utility for sending data to table_box
