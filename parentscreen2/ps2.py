@@ -37,10 +37,13 @@ class ParentScreen2(Screen):
   # Get base measurements and pass to table_box
     self.table_box.ps1_base_width = self.parent.ps1_base_width
     self.table_box.ps1_base_height = self.parent.ps1_base_height
+    self.table_box.login_token = self.parent.login_token
+    self.table_box.user_id = self.parent.id
+    # self.table_box.user_timezone = self.parent.user_timezone
 
   #Get data from apip and pass it to the table_box
     # self.table_screen_id.table_grid.row_data_list = table_api_util(self.parent.login_token)
-    self.table_box.row_data_list = table_api_util(self.parent.login_token)
+    self.table_box.row_data_list = table_api_util(self.table_box.login_token)
     print('self.table_box.row_data_list ::::')
     print(self.table_box.row_data_list [0:4])
 
@@ -51,6 +54,7 @@ class ParentScreen2(Screen):
     self.main_box.ps1_base_width=self.parent.ps1_base_width
     self.main_box.ps1_base_height=self.parent.ps1_base_height
     self.main_box.size_kids()
+    self.main_box.login_token = self.parent.login_token
 
     self.on_enter_count+=1
 

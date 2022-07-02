@@ -14,27 +14,15 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import time
 
+from areyousure.areyousure import AreYouSureBox
+
+
 Builder.load_file('tablebox/tablebox.kv')
 
 
 class RowBox(BoxLayout):...
 
-# class RowCountDialogContent(BoxLayout):
-#   def __init__(self, **kwargs):
-#     super().__init__(**kwargs)
-#     self.orientation = "vertical"
-#     # self.size_hint_y = None
-#     # self.height = 100
-#
-#
-#   def on_size(self, *args):
-#     print('RowCountDialogContent on_size')
-#     print('self.parent:', self.parent)
-#     print('self.parent.parrent:', self.parent.parent)
-#     dialog_box = self.parent.parent.parent
-#     print(dir(dialog_box))
-#     print('dialog_box.parent:', dialog_box.parent)
-#     print('dialog_box.get_parent_window:', dialog_box.get_parent_window)
+
 
 class TableBox(BoxLayout):
   ps1_base_width=ObjectProperty(0)
@@ -57,26 +45,27 @@ class TableBox(BoxLayout):
     self.dialog_rows = None
 
   def on_size(self,*args):
-    print('****   TableBox on_size: ', self.on_size_count)
+    # print('****   TableBox on_size: ', self.on_size_count)
     if self.on_size_count == 2:
       self.label_email_ts.text = "nickapeed@yahoo.com"
 
-      self.label_act_count.text = "Activities Count: **"
+      self.label_act_count.text = "Activities count: **"
 
       self.btn_header_id.text = "ID"
       self.btn_header_date.text = "Date/Time"
       self.btn_header_name.text = "Activity Name"
-      self.btn_header_count.text = "Rows in Table"
+      self.btn_header_count.text = "Rows in\nTable"
 
-      self.label_table_nav.text = "Jump to ..."
-      self.btn_top.text = "Top"
-      self.btn_bottom.text= "Bottom"
+      self.label_table_nav.text = "Go to row: "
+      self.btn_go_to_row.text = "Go"
+      self.btn_top.text = "Top row"
+      self.btn_bottom.text= "Bottom row"
       self.size_kids()
 
     self.on_size_count += 1
 
   def size_kids(self,*args):
-    print('-- TableBox size_kids --')
+    # print('-- TableBox size_kids --')
 
   #  Email / Screen Name I
     self.label_email_ts.size_hint=(None,None)
@@ -121,12 +110,14 @@ class TableBox(BoxLayout):
     self.btn_header_count.height = self.ps1_base_height * .095###
 
   # Table Rows I ##################################################
-    self.row_data_filtered = self.row_data_list[-20:]
+    self.row_data_filtered = self.row_data_list[:10]
     self.build_rows_util()
 
   #Nav Buttons I
     self.label_table_nav.size_hint = (None,None)
     self.label_table_nav.font_size = self.ps1_base_width * .05###
+
+
 
     self.btn_top.size_hint_y = None
     self.btn_bottom.size_hint_y = None
@@ -138,7 +129,7 @@ class TableBox(BoxLayout):
 
 
   def size_kids_continuted(self,*args):
-    print('-- TableBox size_kids_continuted --')
+    # print('-- TableBox size_kids_continuted --')
 
   # Email / Screen Name II
     while self.label_email_ts.texture_size[1] > (self.anchor_email_ts.height * .95) or \
@@ -165,10 +156,11 @@ class TableBox(BoxLayout):
 
     #text_fitter_util shrinks the font_size to fit the button
     self.btn_header_count.font_size = self.ps1_base_width * .07# this is the longest text
-    self.text_fitter_util()
-    self.btn_header_id.font_size = self.btn_header_font_size
-    self.btn_header_date.font_size = self.btn_header_font_size
-    self.btn_header_name.font_size = self.btn_header_font_size
+    header_font_size = self.text_fitter_header_util()
+    # header_font_size = self.text_fitter_content_util(self.btn_go_to_row)
+    self.btn_header_id.font_size = header_font_size
+    self.btn_header_date.font_size = header_font_size
+    self.btn_header_name.font_size = header_font_size
 
   # Assign sorting Buttons
     self.btn_header_id.bind(on_press=self.sort_process_util)
@@ -196,6 +188,8 @@ class TableBox(BoxLayout):
     self.size_rows_util()
 
   #Nav buttons II
+
+
     self.label_table_nav.size = self.label_table_nav.texture_size
     self.anchor_table_nav_label.anchor_x = "left"
     self.anchor_table_nav_label.anchor_y = "bottom"
@@ -206,12 +200,26 @@ class TableBox(BoxLayout):
       self.ps1_base_height * .01,
       0,0)###
 
+    nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
+    print('nav_font_size:::', nav_font_size)
+    self.input_row.font_size = nav_font_size
+    self.input_row.padding=(30,0,0,0)###
     # self.btn_top.height = self.btn_top.texture_size[1]
     # self.btn_bottom.height = self.btn_bottom.texture_size[1]
     self.btn_top.height = self.ps1_base_height * .07
     self.btn_bottom_height = self.ps1_base_height * .07
     self.box_table_nav.height = self.anchor_table_nav_label.height + \
       self.btn_top.height + self.btn_bottom.height
+
+
+  # Divider Nav and Grid Table black line
+    with self.anchor_table_nav_label.canvas.before:
+      Color(.02,.02,.02)
+      Rectangle(pos=(self.anchor_table_nav_label.pos[0],
+        self.anchor_table_nav_label.pos[1] + self.label_table_nav.height- 8),
+        size=(self.ps1_base_width,10))
+
+
 
   # box_table_base height
     self.box_table_base.size_hint_y =None
@@ -250,7 +258,7 @@ class TableBox(BoxLayout):
       self.rowbox_dict[i[0]]=rowbox
       self.grid_table.add_widget(rowbox)
 
-    self.label_act_count.text = f"Activities Count: {len(self.rowbox_dict)}"
+    self.label_act_count.text = f"Activities count: {len(self.rowbox_dict)}"
 
 
   def size_rows_util(self):
@@ -285,21 +293,6 @@ class TableBox(BoxLayout):
       #   Rectangle(pos=(rowbox.pos[0]+rowbox_padding,rowbox.pos[1]), size=(self.ps1_base_width * self.box_header_width,3))
 
 
-
-  def get_dialog_parent(self, widget):
-    print('CANCEL button')
-    print(self.parent)
-    print(self.dialog_rows)
-    print('what is the widget::', widget)
-
-  def get_dialog_data(self, widget):
-    print('OK button')
-    # print('widget.children:', widget.children[0].children)
-    print('self.dialog_rows.content_cls:',self.dialog_rows.content_cls)
-    print('self.dialog_rows.content_cls.text_count:',self.dialog_rows.content_cls.text_count)
-    # print(dir(self.dialog_rows.content_cls.text_count))
-    print('self.dialog_rows.content_cls.text_count.text:::', self.dialog_rows.content_cls.text_count.text)
-
   def set_number_of_rows_util(self, widget):
 
     #only change number of rows if Row button calls this util
@@ -308,54 +301,36 @@ class TableBox(BoxLayout):
       self.row_number_trigger += 1
 
     if self.row_number_trigger % 3 == 0:
-      self.row_data_filtered = self.row_data_list[-20:]
+      self.row_data_filtered = self.row_data_list[:10]
     elif self.row_number_trigger % 3 == 1:
-      self.row_data_filtered = self.row_data_list[-50:]
+      self.row_data_filtered = self.row_data_list[:20]
     elif self.row_number_trigger % 3 == 2:
-      self.row_data_filtered = self.row_data_list[-100:]
-      #Make popup that offeres;
-        # 1) Show This many
-        # 2)show all
-        # 3) Keep what i have
-      # if not self.dialog_rows:
-      #   self.dialog_rows = MDDialog(
-      #     title = "Enter Number of rows to see:",
-      #     type = 'custom',
-      #     buttons = [ MDFlatButton(
-      #                             text="CANCEL",
-      #                             theme_text_color="Custom",
-      #                             text_color=(.3,.3,.3,1),
-      #                             on_press = self.get_dialog_parent
-      #                         ),
-      #                         MDFlatButton(
-      #                             text="OK",
-      #                             theme_text_color="Custom",
-      #                             text_color=(.3,.3,.3,1),
-      #                             on_press= self.get_dialog_data
-      #                             # on_press=self.get_dialog_parent()
-      #                         )],
-      #
-      #     content_cls = RowCountDialogContent()
-      #   )
-      #   self.dialog_rows.open()
+      self.row_data_filtered = self.row_data_list
 
-      # self.row_data_filtered = self.row_data_list
 
-    self.label_act_count.text = f'Activities Count: {len(self.row_data_filtered)}'
+
+    self.label_act_count.text = f'Activities count: {len(self.row_data_filtered)}'
 
 
   def delete_row(self, widget):
     print('delte row')
     print('widget:', widget.name)
+    print('self.parent.parent.parent:', self.parent)
+
+    self.areyousure = AreYouSureBox(delete_btn = widget)
+    self.parent.add_widget(self.areyousure)
 
 
-  def text_fitter_util(self):
+
+
+  def text_fitter_header_util(self):
     # this utility shrinks btn_header_count text until it fits with a 5% buffer
     # uses that font_size on the other buttons
     while self.btn_header_count.texture_size[0]>(self.btn_header_count.width-(self.btn_header_count.width*.05)):
       self.btn_header_count.font_size-=1
       self.btn_header_count.texture_update()
-    self.btn_header_font_size = self.btn_header_count.font_size
+
+    return self.btn_header_count.font_size
 
 
   def text_fitter_content_util(self, thing):
@@ -379,7 +354,6 @@ class TableBox(BoxLayout):
         thing.font_size -= .5
         thing.texture_update()
 
-
     else:
       while thing.texture_size[1] < thing.height *.8 and \
         thing.texture_size[0] < thing.width * .8 and \
@@ -395,6 +369,8 @@ class TableBox(BoxLayout):
   # Set max_font_size
     if self.max_font_size == 0:
       self.max_font_size = thing.font_size * 1.5
+
+    return thing.font_size
 
 
   def sort_by_util(self, widget):
@@ -526,3 +502,13 @@ class TableBox(BoxLayout):
 
   # Size rows
     self.size_rows_util()
+
+
+  def jump_to_row_util(self):
+    # print('self.input_row::', type(self.))
+    if self.input_row.text.isnumeric():
+      desired_row = int(self.input_row.text)
+      self.scroll_view.scroll_y = desired_row / len(self.row_data_filtered)
+    #   print('jumped to ', desired_row/ len(self.row_data_filtered))
+    # else:
+    #   print('Not numeric')

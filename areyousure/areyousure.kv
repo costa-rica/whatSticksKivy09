@@ -1,0 +1,34 @@
+<AreYouSureBox>:
+  label_title: label_title
+  btn_yes: btn_yes
+  btn_no: btn_no
+
+  orientation:"vertical"
+  size_hint:None,None
+  width: root.ps1_base_width * .5
+  height: root.ps1_base_height * .4
+  canvas.before:
+    Color:
+      rgba: [.1,.1,.1,.8]
+    Rectangle:
+      # pos:self.x,self.top
+      size: root.ps1_base_width, root.ps1_base_height
+    Color:
+      rgba: [.7,.3,.03,1]
+    RoundedRectangle:
+      pos:  self.pos
+      # size: root.ps1_base_width, root.ps1_base_height
+      size: self.size
+      radius: [(5, 5), (5, 5), (5, 5), (5, 5)]
+  Label:
+    id: label_title
+    # text:"Are you sure you want to delete?"
+  BoxLayout:
+    Button:
+      id: btn_yes
+      text: "Yes"
+      on_press: root.yes_btn_util()
+    Button:
+      id: btn_no
+      text: "No"
+      on_press: root.no_btn_util()

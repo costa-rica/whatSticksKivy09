@@ -8,6 +8,10 @@ from kivy.clock import Clock
 
 from size_dict import size_dict
 
+from utils import add_activity_util
+
+import datetime
+
 Builder.load_file('mainbox/mainbox.kv')
 
 class MainBoxLayout(BoxLayout):
@@ -33,7 +37,7 @@ class MainBoxLayout(BoxLayout):
       self.label_date.text = "Date"
       self.input_date.text = "6/20/2022"
       self.label_time.text = "Time"
-      self.input_time.text = "17:20"
+      self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
 
       self.btn_submit_act.text = "Submit Activity"
 
@@ -142,6 +146,36 @@ class MainBoxLayout(BoxLayout):
     self.anchor_submit.anchor_x = "right"
     self.anchor_submit.padding = (0,0,self.ps1_base_width * size_dict['anchor_submit']['padding-right'][self.sc],0)
 
+
+  def add_activity(self):
+    print(self.input_date.text)
+    month,day,year = self.input_date.text.split('/')
+    print('month,day,year::', month,day,year)
+    # year = self.input_date.text[-4:]
+    # month = self.input_date.text[]
+    date_thing = f'{year}-{int(month):02d}-{int(day):02d}'
+    time_thing = datetime.datetime.strptime(self.input_time.text, '%I:%M %p').time()
+    # print(time_thing.time())
+    # print(time_thing.ctime())
+    # print(time_thing.dst())
+    # print(time_thing.timestamp())
+    # print(time_thing.timetuple())
+    # print(time_thing.toordinal())
+    # print(time_thing.fromisoformat())
+
+    print(dir(time_thing))
+    print('datetime_of_activity:::', date_thing +'T'+ str(time_thing))
+    payload={}
+    # payload['datetime_of_activity']='2022-05-21T15:31:00'
+    payload['datetime_of_activity'] = date_thing +'T'+ str(time_thing)
+    payload["note"]= self.input_act_note.text
+    payload["source_name"]= "iOS Device App"
+    # payload1["time_stamp_utc"]= "2021-08-29T14:04:07.567861"
+    payload["user_id"]= 1
+    payload["var_activity"]= self.input_act_name.text
+    payload["time_offset"]= 120
+
+    add_activity_util(payload, self.login_token)
 
 class TextInputAddName(TextInput):
   def on_focus(instance, instance_twice, value):#I'm not sure why i'm passing instance twice

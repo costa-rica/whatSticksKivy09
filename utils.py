@@ -9,6 +9,40 @@ import datetime
 base_url = 'https://api.what-sticks-health.com'
 
 
+def add_activity_util(payload, login_token):
+  print('added activity')
+  print(payload)
+  print(login_token)
+  url_add_activity=base_url + "/add_activity"
+  headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
+  response = requests.request("POST", url_add_activity, headers=headers, data=str(json.dumps(payload)))
+  print(response.status_code)
+
+def delete_row_util(act_type, payload, login_token):
+  print('delete_row util')
+
+  if act_type=='User Activity':# User activity deltee
+
+    url_delete_activity_user = base_url + '/delete_user_activity'
+    headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
+    response = requests.request('DELETE',url_delete_activity_user, headers=headers, data=str(json.dumps(payload)))
+
+
+  elif act_type== 'Polar':# Polar actiivty delete
+    url_delete_activity_polar = base_url + '/delete_polar_activity'
+    headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
+    response = requests.request('DELETE',url_delete_activity_polar, headers=headers, data=str(json.dumps(payload)))
+
+  elif act_type == 'Oura Sleep':# Oura sleep delete
+    url_delete_oura_sleep = base_url + f'/delete_oura_sleep'
+    headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
+    response = requests.request('DELETE',url_delete_oura_sleep, headers=headers, data=str(json.dumps(payload)))
+
+  if response.status_code == 200:
+    print('deleted record type:', act_type)
+    print(payload)
+  print(response.status_code)
+
 def table_api_util(login_token):
 
   url_get_activities=base_url + '/kivy_table01'

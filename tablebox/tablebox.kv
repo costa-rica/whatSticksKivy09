@@ -20,6 +20,8 @@
   box_table_nav: box_table_nav
   anchor_table_nav_label: anchor_table_nav_label
   label_table_nav: label_table_nav
+  input_row: input_row
+  btn_go_to_row: btn_go_to_row
   btn_top: btn_top
   btn_bottom: btn_bottom
 
@@ -90,8 +92,15 @@
     #     size: self.size
     AnchorLayout:
       id: anchor_table_nav_label
-      Label:
-        id: label_table_nav
+      BoxLayout:
+
+        Label:
+          id: label_table_nav
+        TextInput:
+          id: input_row
+        Button:
+          id: btn_go_to_row
+          on_press: root.jump_to_row_util()
 
     Button:
       id: btn_top
@@ -120,32 +129,3 @@
     id:label_name_rb
   Button:
     id:btn_delete_rb
-
-# <RowCountDialogContent>
-#   text_count: text_count
-#   # show_all: show_all
-#   keep_same: keep_same
-#
-#   # orientation: "vertical"
-#   spacing: "12dp"
-#   # size_hint_y: None
-#   # height: "120dp"
-#
-#   MDTextField:
-#     id: text_count
-#     hint_text: "Enter rows you want to show:"
-#
-#   # Button:
-#   #   id: show_all
-#   #   text: "Show All"
-#   #   on_press:
-#   #     print('RowCountDialogContent Show all')
-#   #     print(root.parent)
-#   Button:
-#     id: keep_same
-#     text: "Let's keep what we have."
-#     on_press:
-#       print('RowCountDialogContent keep same')
-#       dialog_box = root.parent.parent.parent
-#       print(dialog_box)
-#       print(dir(dialog_box))
