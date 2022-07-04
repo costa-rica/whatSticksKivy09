@@ -1,12 +1,13 @@
 <ParentScreen2>
   name:"parent_screen_2"
-  toolbar:toolbar
-  btn_font_size:btn_font_size
-  md_nav_layout:md_nav_layout
-  child_sm:child_sm
-  act_screen:act_screen
-  table_screen:table_screen
-  navmenu:navmenu
+  toolbar: toolbar
+  btn_font_size: btn_font_size
+  md_nav_layout: md_nav_layout
+  child_sm: child_sm
+  act_screen: act_screen
+  table_screen: table_screen
+  navmenu: navmenu
+  nav_drawer: nav_drawer
 
   MDToolbar:
     id:toolbar
@@ -48,6 +49,7 @@
       id:nav_drawer
       size_hint:.5, None
       height:root.height - root.toolbar.height
+      on_motion: print(self.x)
 
       NavMenu:
         id: navmenu
@@ -74,6 +76,9 @@
   list_item_activity: list_item_activity
   list_item_table: list_item_table
 
+  box_table_screen_label: box_table_screen_label
+  label_table_screen: label_table_screen
+
   orientation:"vertical"
   canvas.before:
     Color:
@@ -81,6 +86,20 @@
     Rectangle:
       pos: self.pos
       size: self.size
+  BoxLayout:
+    id: box_table_screen_label
+    canvas.before:
+      Color:
+        rgba:.1,.1,.1,.1
+      Rectangle:
+        pos: self.pos[0]+3,self.pos[1]
+        size: self.width - 6, 2
+    Label:
+      id: label_table_screen
+      text: "View Logged Activities"
+
+
+
   OneLineListItem:
     id: list_item_activity
     text: "Add Activity"

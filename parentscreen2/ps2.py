@@ -5,6 +5,8 @@ from kivymd.uix.navigationdrawer import MDNavigationDrawer, MDNavigationLayout
 from kivymd.uix.toolbar import MDToolbar
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
+from kivy.graphics import Color, Rectangle
+# from kivymd.uix.navigationdrawer import MDNavigationDrawer
 
 import mainbox.mainbox
 import tablebox.tablebox
@@ -22,12 +24,16 @@ class NavMenu(BoxLayout):...
 
 class ParentScreen2(Screen):
   child_sm=ObjectProperty(ScreenManager())
+  # nav_drawer=ObjectProperty(BoxLayout())
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
     print('ParentScreen2')
     self.on_enter_count=0
     self.sc_tracker=2
     # self.child_sm.bind(self.child_sm.children==self.screen_change)
+    # self.nav_drawer.bind(on_motion = self.nav_drawer_pos)
+
+
 
 
   def table_box_util(self,*args):# passes
@@ -65,8 +71,12 @@ class ParentScreen2(Screen):
     self.main_box.user_id = self.parent.id
 
 
+
     self.font_size_toolbar_size()
-    # self.navmenu_font_size()
+    self.navmenu_font_size()
+    self.navmenu_line()
+
+    self.nav_drawer.bind(on_motion = self.nav_drawer_pos)
 
     self.on_enter_count+=1
 
@@ -100,8 +110,27 @@ class ParentScreen2(Screen):
       self.btn_font_size.font_size+=1
       self.btn_font_size.texture_update()
 
-  # def navmenu_font_size(self):
-  #   print('*****')
-  #   print('self.navmenu.list_item_table.size::', self.navmenu.list_item_table.size)
-  #   # print('self.navmenu.list_item_table.font_size::', self.navmenu.list_item_table.texture_size)
-  #   print(dir(self.navmenu.list_item_table))
+  def navmenu_font_size(self):
+    # print('*****')
+    print('self.navmenu.list_item_table.size::', self.navmenu.list_item_table.size)
+    # print('self.navmenu.list_item_table.font_size::', self.navmenu.list_item_table.texture_size)
+    # print(dir(self.navmenu.list_item_table))
+
+    print('self.navmenu.box_table_screen_label.size:', self.navmenu.box_table_screen_label.size)
+    print('self.navmenu.label_table_screen.size:::', self.navmenu.label_table_screen.size)
+
+  def navmenu_line(self):
+    print('**** navmenu_line')
+    box_label = self.navmenu.box_table_screen_label
+    print(self.navmenu.x,box_label.y)
+    # print(dir(self.nav_drawer))
+    with box_label.canvas:
+      Color(.3,.3,.3,1)
+      Rectangle(pos=(self.nav_drawer.x,box_label.y),
+        size=(self.navmenu.width * .02, 3))###
+
+  def nav_drawer_pos(self):
+    print(self.nav_drawer.x)
+
+  def on_motion(self, etype, me):
+    print(self.nav_drawer.x)
