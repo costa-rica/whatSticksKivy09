@@ -2,15 +2,16 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 
 from size_dict import size_dict
-
 from utils import add_activity_util
-
 import datetime
+
+from areyousure.areyousure import ConfirmBox
+
 
 Builder.load_file('mainbox/mainbox.kv')
 
@@ -19,6 +20,7 @@ class MainBoxLayout(BoxLayout):
   ps1_base_height = ObjectProperty(0)
   toolbar_height = ObjectProperty(0)
   label_email = ObjectProperty()
+  # email = StringProperty()
 
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
@@ -29,13 +31,13 @@ class MainBoxLayout(BoxLayout):
     print('MainBoxLayout on_size')
 
     if self.on_size_count == 1:
-      self.label_email.text = "nickapeed@yahoo.com"
+      # self.label_email.text = self.email
 
       self.label_act_name.text = "Add Activity Name"
       self.label_act_note.text = "Add Activity Note"
 
       self.label_date.text = "Date"
-      self.input_date.text = "6/20/2022"
+      self.input_date.text = datetime.datetime.now().strftime("%m/%d/%Y")
       self.label_time.text = "Time"
       self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
 
@@ -49,6 +51,8 @@ class MainBoxLayout(BoxLayout):
   # Act Screen Name / Email
     self.label_email.size_hint=(None,None)
     self.label_email.font_size=self.ps1_base_height * size_dict['label_email']['font_size'][self.sc]
+    #check make sure email label isn't bigger than width of screen
+    self.font_size_email_label()
     self.label_email.size= self.label_email.texture_size
 
     self.anchor_email.anchor_x="right"
@@ -146,22 +150,14 @@ class MainBoxLayout(BoxLayout):
     self.anchor_submit.anchor_x = "right"
     self.anchor_submit.padding = (0,0,self.ps1_base_width * size_dict['anchor_submit']['padding-right'][self.sc],0)
 
-
   def add_activity(self):
     print(self.input_date.text)
     month,day,year = self.input_date.text.split('/')
     print('month,day,year::', month,day,year)
-    # year = self.input_date.text[-4:]
-    # month = self.input_date.text[]
+
     date_thing = f'{year}-{int(month):02d}-{int(day):02d}'
     time_thing = datetime.datetime.strptime(self.input_time.text, '%I:%M %p').time()
-    # print(time_thing.time())
-    # print(time_thing.ctime())
-    # print(time_thing.dst())
-    # print(time_thing.timestamp())
-    # print(time_thing.timetuple())
-    # print(time_thing.toordinal())
-    # print(time_thing.fromisoformat())
+
 
     print(dir(time_thing))
     print('datetime_of_activity:::', date_thing +'T'+ str(time_thing))
@@ -171,11 +167,39 @@ class MainBoxLayout(BoxLayout):
     payload["note"]= self.input_act_note.text
     payload["source_name"]= "iOS Device App"
     # payload1["time_stamp_utc"]= "2021-08-29T14:04:07.567861"
-    payload["user_id"]= 1
+    payload["user_id"]= self.user_id
     payload["var_activity"]= self.input_act_name.text
     payload["time_offset"]= 120
 
-    add_activity_util(payload, self.login_token)
+    response_status = add_activity_util(payload, self.login_token)
+    self.act_screen = self.parent.parent.parent
+    if response_status == 200:
+      confirm_box = ConfirmBox()
+      self.act_screen.add_widget(confirm_box)
+      #clear act screen from confirm_box
+
+    else:
+      print('Soemthing went wrong...')
+      fail_box = FailBox()
+      self.act_screen.add_widget(fail_box)
+        #open somethign went wrong box with error code
+        #if 401, tell user to try to exit and log back in
+        #other wise oops maybe try later.
+
+  def reset_screen(self):
+    print('**** MainBox reset_screen calleddd ###')
+    self.input_act_name.text = ''
+    self.input_act_note.text = ''
+    self.input_date.text = datetime.datetime.now().strftime("%m/%d/%Y")
+    self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
+
+  def font_size_email_label(self):
+    while self.label_email.texture_size[0] > self.ps1_base_width * .7 or \
+      self.label_email.texture_size[1] > self.ps1_base_height * .07:
+      self.label_email.font_size -= 1
+      self.label_email.texture_update()
+
+
 
 class TextInputAddName(TextInput):
   def on_focus(instance, instance_twice, value):#I'm not sure why i'm passing instance twice

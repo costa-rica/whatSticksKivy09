@@ -146,6 +146,7 @@ class TableBox(BoxLayout):
       self.label_act_count.texture_update()
 
     self.label_act_count.size = self.label_act_count.texture_size
+    self.anchor_act_count.padding = (self.ps1_base_width * .02,0,0,0)
 
   # Table Headers II
     self.box_header_width = .975###
@@ -194,11 +195,11 @@ class TableBox(BoxLayout):
     self.anchor_table_nav_label.anchor_x = "left"
     self.anchor_table_nav_label.anchor_y = "bottom"
     self.anchor_table_nav_label.size_hint_y = None
-    self.anchor_table_nav_label.height = self.label_table_nav.height + self.ps1_base_height * .01
+    self.anchor_table_nav_label.height = self.label_table_nav.height + self.ps1_base_height * .03
     self.anchor_table_nav_label.padding =(
       self.ps1_base_width * .01,
-      self.ps1_base_height * .01,
-      0,0)###
+      self.ps1_base_height * .02,
+      0,self.ps1_base_height * .01)###
 
     nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
     print('nav_font_size:::', nav_font_size)
@@ -210,14 +211,6 @@ class TableBox(BoxLayout):
     self.btn_bottom_height = self.ps1_base_height * .07
     self.box_table_nav.height = self.anchor_table_nav_label.height + \
       self.btn_top.height + self.btn_bottom.height
-
-
-  # Divider Nav and Grid Table black line
-    with self.anchor_table_nav_label.canvas.before:
-      Color(.02,.02,.02)
-      Rectangle(pos=(self.anchor_table_nav_label.pos[0],
-        self.anchor_table_nav_label.pos[1] + self.label_table_nav.height- 8),
-        size=(self.ps1_base_width,10))
 
 
 
@@ -237,6 +230,18 @@ class TableBox(BoxLayout):
       Rectangle(pos=(self.scroll_view.right-(self.ps1_base_width * .014),self.scroll_view.y),
         size=(self.ps1_base_width * .014,self.scroll_view.height))###
       # print("executed shape")
+
+
+  # Divider Nav and Grid Table black line
+    with self.anchor_table_nav_label.canvas.before:
+      Color(.02,.02,.02)
+      border_thinkness = self.ps1_base_height * .02
+      Rectangle(pos=(self.anchor_table_nav_label.pos[0],
+        self.anchor_table_nav_label.pos[1] + self.anchor_table_nav_label.height-border_thinkness),
+        size=(self.ps1_base_width,border_thinkness))
+
+
+
 
   def build_rows_util(self):
     self.rowbox_dict={}

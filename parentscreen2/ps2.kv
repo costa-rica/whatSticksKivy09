@@ -6,6 +6,7 @@
   child_sm:child_sm
   act_screen:act_screen
   table_screen:table_screen
+  navmenu:navmenu
 
   MDToolbar:
     id:toolbar
@@ -18,7 +19,7 @@
       anchor_x:"right"
       Button:
         id: btn_font_size
-        text:"Adj Font"
+        text:"Font Size"
         size_hint:.5,1
         on_press: root.change_app_size()
         elevation:40
@@ -49,6 +50,7 @@
       height:root.height - root.toolbar.height
 
       NavMenu:
+        id: navmenu
 
 
 <ActivityScreen@Screen>
@@ -69,6 +71,9 @@
 
 
 <NavMenu>
+  list_item_activity: list_item_activity
+  list_item_table: list_item_table
+
   orientation:"vertical"
   canvas.before:
     Color:
@@ -77,10 +82,12 @@
       pos: self.pos
       size: self.size
   OneLineListItem:
+    id: list_item_activity
     text: "Add Activity"
     on_press:
       root.parent.parent.parent.child_sm.current="act_screen"
   OneLineListItem:
+    id: list_item_table
     text: "View Logged Activities"
     on_press:
       print('pressed Nav menu to enter table_screen  --------')

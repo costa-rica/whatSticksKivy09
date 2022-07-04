@@ -17,6 +17,7 @@ def add_activity_util(payload, login_token):
   headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
   response = requests.request("POST", url_add_activity, headers=headers, data=str(json.dumps(payload)))
   print(response.status_code)
+  return response.status_code
 
 def delete_row_util(act_type, payload, login_token):
   print('delete_row util')
@@ -50,9 +51,14 @@ def table_api_util(login_token):
   response = requests.request('GET',url_get_activities, headers=headers)
   response_dict = json.loads(response.text)
 
-  row_data_list=[
-    [i[0],convert_datetime(i[1]),i[2], make_date_string(i[1]),h] for h,i in enumerate(response_dict['content'])
-    ]
+  # row_data_list=[
+  #   [i[0],convert_datetime(i[1]),i[2], make_date_string(i[1]),h] for h,i in enumerate(response_dict['content'])
+  #   ]
+
+  row_data_list = []
+  for h, i in enumerate(response_dict['content']):
+    row_data_list.append([i[0],convert_datetime(i[1]),i[2], make_date_string(i[1]),h])
+
   print('****row_data_list created****')
   return row_data_list
 

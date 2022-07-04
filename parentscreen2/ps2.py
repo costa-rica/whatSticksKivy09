@@ -51,29 +51,57 @@ class ParentScreen2(Screen):
     print('ParentScreen2 on_enter', self.on_enter_count)
     act_screen = self.children[0].children[1].children[0]
     self.main_box = act_screen.children[0].children[0].children[1]
+
+    print('self.parent.email:::', self.parent.email, type(self.parent.email))
+    print('********')
+    self.main_box.label_email.text  = self.parent.email
+
+
+
     self.main_box.ps1_base_width=self.parent.ps1_base_width
     self.main_box.ps1_base_height=self.parent.ps1_base_height
     self.main_box.size_kids()
     self.main_box.login_token = self.parent.login_token
+    self.main_box.user_id = self.parent.id
+
+
+    self.font_size_toolbar_size()
+    # self.navmenu_font_size()
 
     self.on_enter_count+=1
 
   def change_app_size(self, *args):
     self.main_box.sc=self.sc_tracker % 3 +1
     if self.main_box.sc == 3:
-      self.btn_font_size.text="Font size: Large"
-      self.btn_font_size.background_color=(.1,.1,.3)
+      self.btn_font_size.text="Large"
+      self.btn_font_size.background_color=(.5,.5,1, .5)
     elif self.main_box.sc ==2:
-      self.btn_font_size.text="Font size: Medium"
+      self.btn_font_size.text="Font Size"
       self.btn_font_size.background_color=(.3,.3,.3)
     else:
-      self.btn_font_size.text="Font size: Small"
-      self.btn_font_size.background_color=(.6,.6,.9)
+      self.btn_font_size.text="Small"
+      self.btn_font_size.background_color=(.5,.5,1, .5)
     self.sc_tracker+=1
     self.main_box.size_kids()
+
+    self.font_size_toolbar_size()
 
     try:
       self.table_box.sc =  self.main_box.sc
       self.table_box.size_rows_util()
     except AttributeError:
       print('no table_box object yet')
+
+
+
+  def font_size_toolbar_size(self):
+    while self.btn_font_size.texture_size[0] < self.btn_font_size.width * .7 and \
+      self.btn_font_size.texture_size[1] < self.btn_font_size.height * .7:
+      self.btn_font_size.font_size+=1
+      self.btn_font_size.texture_update()
+
+  # def navmenu_font_size(self):
+  #   print('*****')
+  #   print('self.navmenu.list_item_table.size::', self.navmenu.list_item_table.size)
+  #   # print('self.navmenu.list_item_table.font_size::', self.navmenu.list_item_table.texture_size)
+  #   print(dir(self.navmenu.list_item_table))
