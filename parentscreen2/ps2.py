@@ -1,17 +1,24 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivymd.uix.navigationdrawer import MDNavigationDrawer, MDNavigationLayout
 from kivymd.uix.toolbar import MDToolbar
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
 from kivy.graphics import Color, Rectangle
-# from kivymd.uix.navigationdrawer import MDNavigationDrawer
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.clock import Clock
+from kivy.uix.anchorlayout import AnchorLayout
+
+from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 
 import mainbox.mainbox
 import tablebox.tablebox
 from utils import table_api_util
 
+import webbrowser
 
 
 # from kivy.clock import Clock
@@ -28,7 +35,7 @@ class ParentScreen2(Screen):
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
     print('ParentScreen2')
-    self.on_enter_count=0
+    # self.on_enter_count=0
     self.sc_tracker=2
     # self.child_sm.bind(self.child_sm.children==self.screen_change)
     # self.nav_drawer.bind(on_motion = self.nav_drawer_pos)
@@ -54,15 +61,11 @@ class ParentScreen2(Screen):
     print(self.table_box.row_data_list [0:4])
 
   def on_enter(self):
-    print('ParentScreen2 on_enter', self.on_enter_count)
+    print('ParentScreen2 on_enter')
     act_screen = self.children[0].children[1].children[0]
     self.main_box = act_screen.children[0].children[0].children[1]
 
-    print('self.parent.email:::', self.parent.email, type(self.parent.email))
-    print('********')
     self.main_box.label_email.text  = self.parent.email
-
-
 
     self.main_box.ps1_base_width=self.parent.ps1_base_width
     self.main_box.ps1_base_height=self.parent.ps1_base_height
@@ -74,11 +77,8 @@ class ParentScreen2(Screen):
 
     self.font_size_toolbar_size()
     self.navmenu_font_size()
-    self.navmenu_line()
 
-    self.nav_drawer.bind(on_motion = self.nav_drawer_pos)
-
-    self.on_enter_count+=1
+    # self.on_enter_count+=1
 
   def change_app_size(self, *args):
     self.main_box.sc=self.sc_tracker % 3 +1
@@ -111,26 +111,169 @@ class ParentScreen2(Screen):
       self.btn_font_size.texture_update()
 
   def navmenu_font_size(self):
-    # print('*****')
-    print('self.navmenu.list_item_table.size::', self.navmenu.list_item_table.size)
-    # print('self.navmenu.list_item_table.font_size::', self.navmenu.list_item_table.texture_size)
-    # print(dir(self.navmenu.list_item_table))
+    print('navmenu_font_size')
 
-    print('self.navmenu.box_table_screen_label.size:', self.navmenu.box_table_screen_label.size)
-    print('self.navmenu.label_table_screen.size:::', self.navmenu.label_table_screen.size)
 
-  def navmenu_line(self):
-    print('**** navmenu_line')
-    box_label = self.navmenu.box_table_screen_label
-    print(self.navmenu.x,box_label.y)
-    # print(dir(self.nav_drawer))
-    with box_label.canvas:
-      Color(.3,.3,.3,1)
-      Rectangle(pos=(self.nav_drawer.x,box_label.y),
-        size=(self.navmenu.width * .02, 3))###
+    self.navmenu.label_act_screen.text = "Add Activity"
+    self.navmenu.label_table_screen.text = "View Logged Activities"
+    self.navmenu.label_wsh_web.text = "What-Sticks Website"
+    self.navmenu.label_exit.text = "Exit"
 
-  def nav_drawer_pos(self):
-    print(self.nav_drawer.x)
+    self.navmenu.label_table_screen.color = (.1,.1,.1)
+    self.navmenu.label_table_screen.size_hint = (None,None)
 
-  def on_motion(self, etype, me):
-    print(self.nav_drawer.x)
+    self.navmenu.label_act_screen.color = (.1,.1,.1)
+    self.navmenu.label_act_screen.size_hint = (None,None)
+
+    self.navmenu.label_wsh_web.color = (.1,.1,.1)
+    self.navmenu.label_wsh_web.size_hint = (None,None)
+
+    self.navmenu.label_exit.color = (.1,.1,.1)
+    self.navmenu.label_exit.size_hint = (None,None)
+
+    self.navmenu.anchor_act_screen_label.size_hint_y = None
+    self.navmenu.anchor_act_screen_label.height = self.navmenu.height * .1
+    self.navmenu.anchor_act_screen_label.anchor_x = "left"
+    self.navmenu.anchor_act_screen_label.padding = (self.navmenu.width * .02,0,0,0)
+
+    self.navmenu.anchor_table_screen_label.size_hint_y = None
+    self.navmenu.anchor_table_screen_label.height = self.navmenu.height * .1
+    self.navmenu.anchor_table_screen_label.anchor_x = "left"
+    self.navmenu.anchor_table_screen_label.padding = (self.navmenu.width * .02,0,0,0)
+
+    self.navmenu.anchor_wsh_web_label.size_hint_y = None
+    self.navmenu.anchor_wsh_web_label.height = self.navmenu.height * .1
+    self.navmenu.anchor_wsh_web_label.anchor_x = "left"
+    self.navmenu.anchor_wsh_web_label.padding = (self.navmenu.width * .02,0,0,0)
+
+    self.navmenu.anchor_exit_label.size_hint_y = None
+    self.navmenu.anchor_exit_label.height = self.navmenu.height * .1
+    self.navmenu.anchor_exit_label.anchor_x = "left"
+    self.navmenu.anchor_exit_label.padding = (self.navmenu.width * .02,0,0,0)
+
+    menu_item_font_size = self.fit_navmenu_item_util(self.navmenu.label_act_screen)
+    self.navmenu.label_table_screen.font_size = menu_item_font_size
+    self.navmenu.label_wsh_web.font_size = menu_item_font_size
+    self.navmenu.label_exit.font_size = menu_item_font_size
+
+    self.fit_navmenu_item_util_2(self.navmenu.label_table_screen)
+    self.fit_navmenu_item_util_2(self.navmenu.label_wsh_web)
+    self.fit_navmenu_item_util_2(self.navmenu.label_exit)
+
+    Clock.schedule_once(self.navmenu_sizing, .01)
+
+  def navmenu_sizing(self, *args):
+    self.navmenu.label_table_screen.size = self.navmenu.label_table_screen.texture_size
+    self.navmenu.label_act_screen.size = self.navmenu.label_act_screen.texture_size
+    self.navmenu.label_wsh_web.size = self.navmenu.label_wsh_web.texture_size
+    self.navmenu.label_exit.size = self.navmenu.label_exit.texture_size
+
+    menu_items_list = [self.navmenu.label_table_screen,
+      self.navmenu.label_act_screen,
+      self.navmenu.label_wsh_web,self.navmenu.label_exit]
+
+    min_font_size = min([i.font_size for i in menu_items_list])
+
+    for i in menu_items_list:
+      i.font_size = min_font_size
+      i.texture_update()
+      i.size = i.texture_size
+
+
+
+
+
+  def fit_navmenu_item_util(self, thing):
+    while thing.texture_size[0] < (self.navmenu.width * .85) and \
+      thing.texture_size[1] < (self.navmenu.height * .085):
+      thing.font_size += 1
+      thing.texture_update()
+
+    while thing.texture_size[0] > (self.navmenu.width * .85) or \
+      thing.texture_size[1] > (self.navmenu.height * .085):
+      thing.font_size -= 1
+      thing.texture_update()
+
+    return thing.font_size
+
+
+  def fit_navmenu_item_util_2(self, thing):
+    thing.texture_update()
+
+    line_height = self.navmenu.height * .1
+
+    if thing.texture_size[0] > (self.navmenu.width * .9):
+      print('view logged is too long')
+      space_per_letter =  len(list(thing.text)) / thing.texture_size[0]
+      line_length = round(space_per_letter * self.navmenu.width *.9)
+      print('line_length aka number of characters in line:::', line_length)
+      pos_last_space_line = thing.text[line_length:].find(' ')
+      print('thing.text[line_length:]:::', thing.text[line_length:])
+      print('pos_last_space_line:::', pos_last_space_line)
+      if pos_last_space_line != -1:
+        new_string_list = list(thing.text)
+        new_string_list[line_length + pos_last_space_line]="\n"
+        thing.text=''.join(new_string_list)
+        thing.halign ='left'
+        thing.texture_update()
+
+        line_height = self.navmenu.height * .2
+        thing.parent.height = line_height
+
+    # print('thing.font_size:::', thing.font_size)
+
+
+    while thing.texture_size[0] > (self.navmenu.width * .85) or \
+      thing.texture_size[1] > (line_height * .85):
+      thing.font_size -= 1
+      thing.texture_update()
+
+
+    return thing.font_size
+
+  def where_is_it(self):
+    print("pos:::",self.navmenu.label_table_screen.pos)
+    print("navmenu.size:", self.navmenu.size)
+    print("navmenu.pos::", self.navmenu.pos)
+    print('label_table_screen::', self.navmenu.label_table_screen.texture_size)
+
+  def change_screen(self):
+    # if
+    self.child_sm.current = "table_screen"
+
+
+
+class AnchorClickable(TouchRippleBehavior, ButtonBehavior, AnchorLayout):
+  ripple_duration_out = NumericProperty(.7)
+  ripple_duration_in = NumericProperty(1)
+  def __init__(self, **kwargs):
+    super(AnchorClickable, self).__init__(**kwargs)
+
+  def on_touch_down(self, touch):
+    collide_point = self.collide_point(touch.x, touch.y)
+    if collide_point:
+      touch.grab(self)
+      self.ripple_show(touch)
+      print('AnchorClickable clicked')
+      ps2 = self.parent.parent.parent.parent
+      # ps2.where_is_it()
+      print('This label sys::', self.children[0].text)
+      if self.children[0].text[:4] == 'Add ':
+        ps2.child_sm.current = 'act_screen'
+      elif self.children[0].text[:4] == 'View':
+        ps2.child_sm.current = 'table_screen'
+        ps2.table_box_util()# utility for sending data to table_box
+      elif self.children[0].text[:4] == 'What':
+        webbrowser.open('https://what-sticks-health.com')
+
+
+      return True
+    return False
+
+
+  def on_touch_up(self, touch):
+    if touch.grab_current is self:
+      touch.ungrab(self)
+      self.ripple_fade()
+      return True
+    return False

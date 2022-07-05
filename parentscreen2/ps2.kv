@@ -73,21 +73,38 @@
 
 
 <NavMenu>
-  list_item_activity: list_item_activity
-  list_item_table: list_item_table
-
-  box_table_screen_label: box_table_screen_label
+  anchor_act_screen_label: anchor_act_screen_label
+  label_act_screen: label_act_screen
+  anchor_table_screen_label: anchor_table_screen_label
   label_table_screen: label_table_screen
+  anchor_wsh_web_label: anchor_wsh_web_label
+  label_wsh_web: label_wsh_web
+  anchor_exit_label: anchor_exit_label
+  label_exit: label_exit
 
   orientation:"vertical"
+
   canvas.before:
     Color:
       rgb:127/255,160/255,189/255
     Rectangle:
       pos: self.pos
       size: self.size
-  BoxLayout:
-    id: box_table_screen_label
+
+  AnchorClickable:
+    id: anchor_act_screen_label
+    canvas.before:
+      Color:
+        rgba:.1,.1,.1,.1
+      Rectangle:
+        pos: self.pos[0]+3,self.pos[1]
+        size: self.width - 6, 2
+    Label:
+      id: label_act_screen
+      text: "Add Activity"
+
+  AnchorClickable:
+    id: anchor_table_screen_label
     canvas.before:
       Color:
         rgba:.1,.1,.1,.1
@@ -96,21 +113,30 @@
         size: self.width - 6, 2
     Label:
       id: label_table_screen
-      text: "View Logged Activities"
+
+  AnchorClickable:
+    id: anchor_wsh_web_label
+    canvas.before:
+      Color:
+        rgba:.1,.1,.1,.1
+      Rectangle:
+        pos: self.pos[0]+3,self.pos[1]
+        size: self.width - 6, 2
+    Label:
+      id: label_wsh_web
 
 
+  AnchorClickable:
+    id: anchor_exit_label
+    canvas.before:
+      Color:
+        rgba:.1,.1,.1,.1
+      Rectangle:
+        pos: self.pos[0]+3,self.pos[1]
+        size: self.width - 6, 2
+    on_touch_down: app.stop()
+    Label:
+      id: label_exit
 
-  OneLineListItem:
-    id: list_item_activity
-    text: "Add Activity"
-    on_press:
-      root.parent.parent.parent.child_sm.current="act_screen"
-  OneLineListItem:
-    id: list_item_table
-    text: "View Logged Activities"
-    on_press:
-      print('pressed Nav menu to enter table_screen  --------')
-      ps2=root.parent.parent.parent
-      ps2.child_sm.current="table_screen"
-      ps2.table_box_util()# utility for sending data to table_box
+
   Label:
