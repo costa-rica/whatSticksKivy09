@@ -23,11 +23,11 @@
         text:"Font Size"
         size_hint:.5,1
         on_press: root.change_app_size()
-        elevation:40
+        # elevation:40
         # background_color: .3,.8,.3,1
         background_color: .3,.3,.3,1
         # color: 1,.2,.2,1
-        border:15,15,15,15
+        # border:15,15,15,15
 
   MDNavigationLayout:
     id:md_nav_layout
@@ -134,7 +134,7 @@
       Rectangle:
         pos: self.pos[0]+3,self.pos[1]
         size: self.width - 6, 2
-    on_touch_down: app.stop()
+    # on_touch_down: app.stop()
     Label:
       id: label_exit
 

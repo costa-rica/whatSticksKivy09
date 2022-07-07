@@ -194,9 +194,9 @@ class MainBoxLayout(BoxLayout):
     self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
 
   def font_size_email_label(self):
-    while self.label_email.texture_size[0] > self.ps1_base_width * .7 or \
+    while self.label_email.texture_size[0] > self.ps1_base_width * .5 or \
       self.label_email.texture_size[1] > self.ps1_base_height * .07:
-      self.label_email.font_size -= 1
+      self.label_email.font_size -= .25
       self.label_email.texture_update()
 
 

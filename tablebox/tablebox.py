@@ -23,11 +23,10 @@ Builder.load_file('tablebox/tablebox.kv')
 class RowBox(BoxLayout):...
 
 
-
 class TableBox(BoxLayout):
   ps1_base_width=ObjectProperty(0)
   ps1_base_height=ObjectProperty(0)
-  # toolbar_height=ObjectProperty(0)
+
 
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
@@ -45,7 +44,7 @@ class TableBox(BoxLayout):
     self.dialog_rows = None
 
   def on_size(self,*args):
-    # print('****   TableBox on_size: ', self.on_size_count)
+    print('****   TableBox on_size: ', self.on_size_count)
     if self.on_size_count == 2:
       self.label_email_ts.text = "nickapeed@yahoo.com"
 
@@ -65,65 +64,23 @@ class TableBox(BoxLayout):
     self.on_size_count += 1
 
   def size_kids(self,*args):
-    # print('-- TableBox size_kids --')
+    print('-- TableBox size_kids --')
 
   #  Email / Screen Name I
-    self.label_email_ts.size_hint=(None,None)
-    self.label_email_ts.font_size=100
-    self.label_email_ts.size = self.label_email_ts.texture_size
-
-    self.anchor_email_ts.anchor_x="right"
-    self.anchor_email_ts.anchor_y= "bottom"
-    self.anchor_email_ts.size_hint_y=None
-    self.anchor_email_ts.height = self.ps1_base_height * .05
+    self.size_email()
 
   # Activities Count I
-    self.label_act_count.size_hint=(None,None)
-    self.label_act_count.font_size = 100
-    self.label_act_count.size = self.label_act_count.texture_size
-
-    self.anchor_act_count.anchor_x="left"
-    self.anchor_act_count.anchor_y="bottom"
-    self.anchor_act_count.size_hint_y=None
-    self.anchor_act_count.height = self.ps1_base_height * .05
+    self.size_act_count()
 
   # Table Header I (give oversized font_size - fitter will shrink later)
-    self.btn_header_id.font_size = 100
-    self.btn_header_date.font_size = 100
-    self.btn_header_name.font_size = 100
-    self.btn_header_count.font_size = 100
-
-    self.btn_header_id.size_hint = (None,None)
-    self.btn_header_date.size_hint = (None,None)
-    self.btn_header_name.size_hint = (None,None)
-    self.btn_header_count.size_hint = (None,None)
-
-    self.box_header.size_hint_y = None
-    self.box_header.height = self.ps1_base_height * .095###
-
-    self.anchor_header.size_hint = (1,None)
-    self.anchor_header.height = self.ps1_base_height * .1###
-
-    self.btn_header_id.height = self.ps1_base_height * .095###
-    self.btn_header_date.height = self.ps1_base_height * .095###
-    self.btn_header_name.height = self.ps1_base_height * .095###
-    self.btn_header_count.height = self.ps1_base_height * .095###
+    self.size_header()
 
   # Table Rows I ##################################################
     self.row_data_filtered = self.row_data_list[:10]
     self.build_rows_util()
 
   #Nav Buttons I
-    self.label_table_nav.size_hint = (None,None)
-    self.label_table_nav.font_size = self.ps1_base_width * .05###
-
-
-
-    self.btn_top.size_hint_y = None
-    self.btn_bottom.size_hint_y = None
-
-    self.btn_top.font_size = self.ps1_base_width * .06###
-    self.btn_bottom.font_size = self.ps1_base_width * .06###
+    self.size_nav_buttons()
 
     Clock.schedule_once(self.size_kids_continuted, .01)
 
@@ -132,94 +89,30 @@ class TableBox(BoxLayout):
     # print('-- TableBox size_kids_continuted --')
 
   # Email / Screen Name II
-    while self.label_email_ts.texture_size[1] > (self.anchor_email_ts.height * .95) or \
-      self.label_email_ts.texture_size[0] > (self.anchor_email_ts.width * .5):###
-      self.label_email_ts.font_size-=1
-      self.label_email_ts.texture_update()
-
-    self.label_email_ts.size = self.label_email_ts.texture_size
+    self.size_email_2()
 
   # Activities Count II
-    while self.label_act_count.texture_size[1] > (self.anchor_act_count.height *.95) or \
-      self.label_act_count.texture_size[0] > (self.anchor_act_count.width * .5):###
-      self.label_act_count.font_size -= 1
-      self.label_act_count.texture_update()
-
-    self.label_act_count.size = self.label_act_count.texture_size
-    self.anchor_act_count.padding = (self.ps1_base_width * .02,0,0,0)
+    self.size_act_count_2()
 
   # Table Headers II
-    self.box_header_width = .975###
-    self.btn_header_id.width = self.ps1_base_width * (self.box_header_width * .2)
-    self.btn_header_date.width = self.ps1_base_width * (self.box_header_width * .25)
-    self.btn_header_name.width = self.ps1_base_width * (self.box_header_width * .4)
-    self.btn_header_count.width = self.ps1_base_width * (self.box_header_width * .15)
-
-    #text_fitter_util shrinks the font_size to fit the button
-    self.btn_header_count.font_size = self.ps1_base_width * .07# this is the longest text
-    header_font_size = self.text_fitter_header_util()
-    # header_font_size = self.text_fitter_content_util(self.btn_go_to_row)
-    self.btn_header_id.font_size = header_font_size
-    self.btn_header_date.font_size = header_font_size
-    self.btn_header_name.font_size = header_font_size
-
-  # Assign sorting Buttons
-    self.btn_header_id.bind(on_press=self.sort_process_util)
-    self.btn_header_date.bind(on_press=self.sort_process_util)
-    self.btn_header_name.bind(on_press=self.sort_process_util)
-    self.btn_header_count.bind(on_press=self.number_of_rows_process_util)
-
-    self.box_header.size_hint_x = None
-    self.box_header.width = self.ps1_base_width * self.box_header_width
-
-    self.anchor_header.anchor_x = 'center'
-
-  # Max height of all the header box items
-    self.box_table_base.height = self.btn_header_id.height
-  # Header background_color black
-    with self.anchor_header.canvas.before:
-      Color(.02,.02,.02)
-      Rectangle(pos=self.anchor_header.pos,size=self.anchor_header.size)
-    # with self.box_header.canvas.before:
-    #   Color(.1, .1, .1, 1)
-    #   Rectangle(pos=(self.box_header.pos[0],self.box_header.pos[1]-4), size=(self.ps1_base_width,6))
+    self.size_header_2()
 
   # Table Rows II
     self.grid_table.padding = (self.ps1_base_width * .0118,0,0,0)
     self.size_rows_util()
 
-  #Nav buttons II
+  # Nav buttons II
+    self.size_nav_buttons_2()
 
-
-    self.label_table_nav.size = self.label_table_nav.texture_size
-    self.anchor_table_nav_label.anchor_x = "left"
-    self.anchor_table_nav_label.anchor_y = "bottom"
-    self.anchor_table_nav_label.size_hint_y = None
-    self.anchor_table_nav_label.height = self.label_table_nav.height + self.ps1_base_height * .03
-    self.anchor_table_nav_label.padding =(
-      self.ps1_base_width * .01,
-      self.ps1_base_height * .02,
-      0,self.ps1_base_height * .01)###
-
-    nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
-    print('nav_font_size:::', nav_font_size)
-    self.input_row.font_size = nav_font_size
-    self.input_row.padding=(30,0,0,0)###
-    # self.btn_top.height = self.btn_top.texture_size[1]
-    # self.btn_bottom.height = self.btn_bottom.texture_size[1]
-    self.btn_top.height = self.ps1_base_height * .07
-    self.btn_bottom_height = self.ps1_base_height * .07
-    self.box_table_nav.height = self.anchor_table_nav_label.height + \
-      self.btn_top.height + self.btn_bottom.height
-
-
-
-  # box_table_base height
+  # Size of the container of the table
+      # ---> incl: anchor_header and scroll_view (w/ grid_table)
     self.box_table_base.size_hint_y =None
     self.box_table_base.height = self.height - (self.anchor_email_ts.height + \
       self.anchor_act_count.height + self.box_table_nav.height)
 
     Clock.schedule_once(self.make_rows_frame, .01)
+
+    Clock.schedule_once(self.make_header_boarder, .01)
 
   def make_rows_frame(self,*args):
     # print('self.scroll_view.x;::', self.scroll_view.x)
@@ -240,10 +133,8 @@ class TableBox(BoxLayout):
         self.anchor_table_nav_label.pos[1] + self.anchor_table_nav_label.height-border_thinkness),
         size=(self.ps1_base_width,border_thinkness))
 
-
-
-
   def build_rows_util(self):
+    print('Tablebox build_rows_util')
     self.rowbox_dict={}
 
     row_data = self.row_data_filtered
@@ -264,7 +155,6 @@ class TableBox(BoxLayout):
       self.grid_table.add_widget(rowbox)
 
     self.label_act_count.text = f"Activities count: {len(self.rowbox_dict)}"
-
 
   def size_rows_util(self):
     for counter, (i,rowbox) in enumerate(self.rowbox_dict.items()):
@@ -297,7 +187,6 @@ class TableBox(BoxLayout):
       #   Color(.1, .1, .4, 1)
       #   Rectangle(pos=(rowbox.pos[0]+rowbox_padding,rowbox.pos[1]), size=(self.ps1_base_width * self.box_header_width,3))
 
-
   def set_number_of_rows_util(self, widget):
 
     #only change number of rows if Row button calls this util
@@ -312,10 +201,7 @@ class TableBox(BoxLayout):
     elif self.row_number_trigger % 3 == 2:
       self.row_data_filtered = self.row_data_list
 
-
-
     self.label_act_count.text = f'Activities count: {len(self.row_data_filtered)}'
-
 
   def delete_row(self, widget):
     print('delte row')
@@ -325,9 +211,6 @@ class TableBox(BoxLayout):
     self.areyousure = AreYouSureBox(delete_btn = widget)
     self.parent.add_widget(self.areyousure)
 
-
-
-
   def text_fitter_header_util(self):
     # this utility shrinks btn_header_count text until it fits with a 5% buffer
     # uses that font_size on the other buttons
@@ -336,7 +219,6 @@ class TableBox(BoxLayout):
       self.btn_header_count.texture_update()
 
     return self.btn_header_count.font_size
-
 
   def text_fitter_content_util(self, thing):
   # # is there room for two lines in button / label ---> if yes split into rows:
@@ -377,7 +259,6 @@ class TableBox(BoxLayout):
 
     return thing.font_size
 
-
   def sort_by_util(self, widget):
     print(f'--- sort_by_util called by {widget.text} ---')
 
@@ -406,7 +287,7 @@ class TableBox(BoxLayout):
       self.btn_header_date.background_color = (1,1,1,1)
       self.btn_header_date.text = 'Date/Time'
       self.btn_header_name.background_color = (1,1,1,1)
-      self.btn_header_name.text = 'Acitivity Name'
+      self.btn_header_name.text = 'Activity Name'
       self.name_sort_counter=0
       self.date_sort_counter = 0
       self.id_sort_counter += 1
@@ -432,7 +313,7 @@ class TableBox(BoxLayout):
       self.btn_header_id.background_color = (1,1,1,1)
       self.btn_header_id.text = 'ID'
       self.btn_header_name.background_color = (1,1,1,1)
-      self.btn_header_name.text = 'Acitivity Name'
+      self.btn_header_name.text = 'Activity Name'
       self.name_sort_counter=0
       self.id_sort_counter = 0
 
@@ -464,8 +345,6 @@ class TableBox(BoxLayout):
 
       self.name_sort_counter += 1
 
-
-
   def sort_process_util(self, widget):
     print('ID header button was pressed')
     print('Now in sort_id_process_util')
@@ -484,7 +363,6 @@ class TableBox(BoxLayout):
   # Size rows
     self.size_rows_util()
 
-
   def number_of_rows_process_util(self, widget):
     self.set_number_of_rows_util(widget)
 
@@ -497,7 +375,7 @@ class TableBox(BoxLayout):
     self.btn_header_date.background_color = (1,1,1,1)
     self.btn_header_date.text = 'Date/Time'
     self.btn_header_name.background_color = (1,1,1,1)
-    self.btn_header_name.text = 'Acitivity Name'
+    self.btn_header_name.text = 'Activity Name'
     self.id_sort_counter = 0
     self.name_sort_counter = 0
     self.date_sort_counter = 0
@@ -508,7 +386,6 @@ class TableBox(BoxLayout):
   # Size rows
     self.size_rows_util()
 
-
   def jump_to_row_util(self):
     # print('self.input_row::', type(self.))
     if self.input_row.text.isnumeric():
@@ -517,3 +394,141 @@ class TableBox(BoxLayout):
     #   print('jumped to ', desired_row/ len(self.row_data_filtered))
     # else:
     #   print('Not numeric')
+
+### ALL Size Defs #########
+  def size_email(self):
+  #  Email / Screen Name I
+    self.label_email_ts.size_hint=(None,None)
+    self.label_email_ts.font_size=self.ps1_base_height * size_dict['label_email']['font_size'][self.sc]
+    # print('self.label_email_ts.font_size:', self.label_email_ts.font_size)
+    # self.label_email_ts.size_hint=(None,None)
+    # self.label_email_ts.font_size=100
+    # Clock.schedule_once(self.size_email_2, .01)
+
+  def size_email_2(self,*args):
+    self.font_size_email_label()
+    self.label_email_ts.size = self.label_email_ts.texture_size
+
+    self.anchor_email_ts.anchor_x="right"
+    self.anchor_email_ts.anchor_y= "bottom"
+    self.anchor_email_ts.size_hint_y=None
+    self.anchor_email_ts.height = self.ps1_base_height * .07
+
+    # print('self.label_email_ts.texture_size[0]::', self.label_email_ts.texture_size[0])
+    # print('self.ps1_base_width * .5 :::', self.ps1_base_width * .5 )
+
+  def font_size_email_label(self):
+    while self.label_email_ts.texture_size[0] > self.ps1_base_width * .5 or \
+      self.label_email_ts.texture_size[1] > self.ps1_base_height * .07:
+
+      self.label_email_ts.font_size -= .25
+      self.label_email_ts.texture_update()
+
+    # print('changeed self.label_email_ts.font_size:', self.label_email_ts.font_size)
+
+  def size_act_count(self):
+    self.label_act_count.size_hint=(None,None)
+    self.label_act_count.font_size = 100
+    self.label_act_count.size = self.label_act_count.texture_size
+
+    self.anchor_act_count.anchor_x="left"
+    self.anchor_act_count.anchor_y="bottom"
+    self.anchor_act_count.size_hint_y=None
+    self.anchor_act_count.height = self.ps1_base_height * .05
+
+  def size_act_count_2(self):
+
+    while self.label_act_count.texture_size[1] > (self.anchor_act_count.height *.95) or \
+      self.label_act_count.texture_size[0] > (self.anchor_act_count.width * .5):###
+      self.label_act_count.font_size -= 1
+      self.label_act_count.texture_update()
+
+    self.label_act_count.size = self.label_act_count.texture_size
+    self.anchor_act_count.padding = (self.ps1_base_width * .02,0,0,0)
+
+  def size_header(self):
+    self.btn_header_id.font_size = 100
+    self.btn_header_date.font_size = 100
+    self.btn_header_name.font_size = 100
+    self.btn_header_count.font_size = 100
+
+    self.btn_header_id.size_hint = (None,None)
+    self.btn_header_date.size_hint = (None,None)
+    self.btn_header_name.size_hint = (None,None)
+    self.btn_header_count.size_hint = (None,None)
+
+    self.box_header.size_hint_y = None
+    self.box_header.height = self.ps1_base_height * .095###
+
+    self.anchor_header.size_hint = (1,None)
+    self.anchor_header.height = self.ps1_base_height * .1###
+
+    self.btn_header_id.height = self.ps1_base_height * .095###
+    self.btn_header_date.height = self.ps1_base_height * .095###
+    self.btn_header_name.height = self.ps1_base_height * .095###
+    self.btn_header_count.height = self.ps1_base_height * .095###
+
+  def size_header_2(self):
+    self.box_header_width = .975###
+    self.btn_header_id.width = self.ps1_base_width * (self.box_header_width * .2)
+    self.btn_header_date.width = self.ps1_base_width * (self.box_header_width * .25)
+    self.btn_header_name.width = self.ps1_base_width * (self.box_header_width * .4)
+    self.btn_header_count.width = self.ps1_base_width * (self.box_header_width * .15)
+
+    #text_fitter_util shrinks the font_size to fit the button
+    self.btn_header_count.font_size = self.ps1_base_width * .07# this is the longest text
+    header_font_size = self.text_fitter_header_util()
+    # header_font_size = self.text_fitter_content_util(self.btn_go_to_row)
+    self.btn_header_id.font_size = header_font_size
+    self.btn_header_date.font_size = header_font_size
+    self.btn_header_name.font_size = header_font_size
+
+  # Assign sorting Buttons
+    self.btn_header_id.bind(on_press=self.sort_process_util)
+    self.btn_header_date.bind(on_press=self.sort_process_util)
+    self.btn_header_name.bind(on_press=self.sort_process_util)
+    self.btn_header_count.bind(on_press=self.number_of_rows_process_util)
+
+    self.box_header.size_hint_x = None
+    self.box_header.width = self.ps1_base_width * self.box_header_width
+
+    self.anchor_header.anchor_x = 'center'
+
+  # Max height of all the header box items
+    self.box_table_base.height = self.btn_header_id.height
+
+  def make_header_boarder(self, *args):
+    with self.anchor_header.canvas.before:
+      Color(.02,.02,.02)
+      Rectangle(pos=self.anchor_header.pos,size=self.anchor_header.size)
+
+  def size_nav_buttons(self):
+    self.label_table_nav.size_hint = (None,None)
+    self.label_table_nav.font_size = self.ps1_base_width * .05###
+
+    self.btn_top.size_hint_y = None
+    self.btn_bottom.size_hint_y = None
+
+    self.btn_top.font_size = self.ps1_base_width * .06###
+    self.btn_bottom.font_size = self.ps1_base_width * .06###
+
+  def size_nav_buttons_2(self):
+    self.label_table_nav.size = self.label_table_nav.texture_size
+    self.anchor_table_nav_label.anchor_x = "left"
+    self.anchor_table_nav_label.anchor_y = "bottom"
+    self.anchor_table_nav_label.size_hint_y = None
+    self.anchor_table_nav_label.height = self.label_table_nav.height + self.ps1_base_height * .03
+    self.anchor_table_nav_label.padding =(
+      self.ps1_base_width * .01,
+      self.ps1_base_height * .02,
+      0,self.ps1_base_height * .01)###
+
+    nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
+
+    self.input_row.font_size = nav_font_size
+    self.input_row.padding=(30,0,0,0)###
+
+    self.btn_top.height = self.ps1_base_height * .07
+    self.btn_bottom_height = self.ps1_base_height * .07
+    self.box_table_nav.height = self.anchor_table_nav_label.height + \
+      self.btn_top.height + self.btn_bottom.height
