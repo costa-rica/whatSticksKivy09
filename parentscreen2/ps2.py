@@ -195,38 +195,41 @@ class ParentScreen2(Screen):
     self.child_sm.current = "table_screen"
 
 
-class AnchorClickable(TouchRippleBehavior, ButtonBehavior, AnchorLayout):
+
+class AnchorClickable_nav(ButtonBehavior,AnchorLayout):
   ripple_duration_out = NumericProperty(.7)
   ripple_duration_in = NumericProperty(1)
   def __init__(self, **kwargs):
-    super(AnchorClickable, self).__init__(**kwargs)
+    super(AnchorClickable_nav, self).__init__(**kwargs)
 
-  def on_touch_down(self, touch):
-    collide_point = self.collide_point(touch.x, touch.y)
-    if collide_point:
-      touch.grab(self)
-      self.ripple_show(touch)
-      print('AnchorClickable clicked')
-      ps2 = self.parent.parent.parent.parent
-
-      if self.children[0].text[:4] == 'Add ':
-        ps2.child_sm.current = 'act_screen'
-      elif self.children[0].text[:4] == 'View':
-        ps2.child_sm.current = 'table_screen'
-        ps2.table_box_util()# utility for sending data to table_box
-      elif self.children[0].text[:4] == 'What':
-        webbrowser.open('https://what-sticks-health.com')
-      elif self.children[0].text[:4] == 'Exit':
-        print('app exit')
-        MDApp.get_running_app().stop()
-
-      return True
-    return False
+  def on_touch_down(self,touch):
+    collide_point_1 = self.collide_point(touch.x, touch.y)
+    if collide_point_1:
+      print('Table on_touch_down')
+      self.ps2 = self.parent.parent.parent.parent
+      Clock.schedule_once(self.options,1)
 
 
   def on_touch_up(self, touch):
     if touch.grab_current is self:
       touch.ungrab(self)
+      self.ripple_duration_out = 0.4
       self.ripple_fade()
+      print('Table on_touch_UP')
       return True
     return False
+
+
+
+  def options(self,*args):
+    print('self.children[0].text[:4]:::',self.children[0].text[:4])
+    if self.children[0].text[:4] == 'Add ':
+      self.ps2.child_sm.current = 'act_screen'
+    elif self.children[0].text[:4] == 'View':
+      self.ps2.child_sm.current = 'table_screen'
+      self.ps2.table_box_util()# utility for sending data to table_box
+    elif self.children[0].text[:4] == 'Go t':
+      webbrowser.open('https://what-sticks-health.com')
+    elif self.children[0].text[:4] == 'Exit':
+      print('app exit')
+      MDApp.get_running_app().stop()

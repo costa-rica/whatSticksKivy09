@@ -78,7 +78,38 @@
       # pos:self.x,self.top
       size: root.ps1_base_width, root.ps1_base_height
     Color:
-      rgba: [.07,.3,.03,1]
+      rgba: [.7,.3,.03,1]
+    RoundedRectangle:
+      pos:  self.pos
+      size: self.size
+      radius: [(5, 5), (5, 5), (5, 5), (5, 5)]
+  Label:
+    id: label_title
+  BoxLayout:
+
+    Button:
+      id: btn_ok
+      text: "ok"
+      on_press: root.ok_btn_util()
+
+
+
+<FailBoxLogin>:
+  label_title: label_title
+  btn_ok: btn_ok
+
+  orientation:"vertical"
+  size_hint:None,None
+  width: root.ps1_base_width * .5
+  height: root.ps1_base_height * .4
+  canvas.before:
+    Color:
+      rgba: [.1,.1,.1,.8]
+    Rectangle:
+      # pos:self.x,self.top
+      size: root.ps1_base_width, root.ps1_base_height
+    Color:
+      rgba: [.7,.3,.03,1]
     RoundedRectangle:
       pos:  self.pos
       size: self.size

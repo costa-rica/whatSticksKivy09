@@ -91,7 +91,7 @@
       pos: self.pos
       size: self.size
 
-  AnchorClickable:
+  AnchorClickable_nav:
     id: anchor_act_screen_label
     canvas.before:
       Color:
@@ -103,7 +103,7 @@
       id: label_act_screen
       text: "Add Activity"
 
-  AnchorClickable:
+  AnchorClickable_nav:
     id: anchor_table_screen_label
     canvas.before:
       Color:
@@ -114,7 +114,7 @@
     Label:
       id: label_table_screen
 
-  AnchorClickable:
+  AnchorClickable_nav:
     id: anchor_wsh_web_label
     canvas.before:
       Color:
@@ -126,7 +126,7 @@
       id: label_wsh_web
 
 
-  AnchorClickable:
+  AnchorClickable_nav:
     id: anchor_exit_label
     canvas.before:
       Color:
@@ -134,7 +134,6 @@
       Rectangle:
         pos: self.pos[0]+3,self.pos[1]
         size: self.width - 6, 2
-    # on_touch_down: app.stop()
     Label:
       id: label_exit
 

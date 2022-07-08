@@ -1,6 +1,6 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty, ColorProperty, StringProperty
+from kivy.properties import ObjectProperty, ColorProperty, StringProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
@@ -8,13 +8,18 @@ from kivy.graphics import Rectangle, Color
 from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 from kivymd.uix.button import MDRectangleFlatButton, MDFillRoundFlatButton
 from kivy.uix.popup import Popup
-
-# from mainbox.mainbox import CustomPopup
+from kivy.clock import Clock
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.label import Label
+from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.behaviors.touchripple import TouchRippleBehavior
+from areyousure.areyousure import FailBoxLogin
 
 from size_dict import size_dict
 
 import requests
 import json
+import webbrowser
 
 # from utils import text_size_coef_utility
 
@@ -32,22 +37,23 @@ class ParentScreen1(Screen):
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
     print('ParentScreen1 __init__')
-    self.bind(size=self.size_widgets)
+    self.bind(size=self.size_kids)
     self.call_count=0
 
 
-  def size_widgets(self,*args):
+  def size_kids(self,*args):
     print('ParentScreen1 size_widgets')
     if self.call_count >0:
       self.ps1_base_width=self.width
       self.ps1_base_height=self.height
 
-      self.md_txt_field_email.text='nickapeed@yahoo.com'
-      self.md_txt_field_password.text='test'
 
   #Size widgets based on size_dict parameters
       self.anchor_app_name.height = self.ps1_base_height * size_dict['anchor_app_name']['height'][2]
       self.label_app_name.font_size = self.ps1_base_width * size_dict['label_app_name']['font_size'][2]
+
+
+
       self.anchor_email_ps1.height = self.ps1_base_height * size_dict['anchor_email_ps1']['height'][2]
 
       self.anchor_email_ps1.padding = (self.ps1_base_width * size_dict['anchor_email_ps1']['padding-left'][2],0,
@@ -66,7 +72,28 @@ class ParentScreen1(Screen):
       self.anchor_exit.padding = (0,0,self.ps1_base_width * size_dict['anchor_exit']['padding-right'][2],0)
       self.btn_exit.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2]
 
+      # self.label_register.size_hint_y = .35
+      # self.label_register.size_hint_x
+      self.label_register.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2] *.5
+
+
+
+      Clock.schedule_once(self.size_kids_2)
     self.call_count+=1
+
+  def size_kids_2(self,*args):
+    #set size of image
+    self.image_wsh.size = self.image_wsh.texture_size
+
+    # set size of label
+    self.label_app_name.size_hint_x = None
+    self.label_app_name.width = self.label_app_name.texture_size[0]
+
+    self.box_app_name.size_hint_x = None
+    self.box_app_name.width = self.label_app_name.width + self.image_wsh.width
+
+    # self.label_register.size = self.label_register.texture_size
+
 
 
   def verify_user(self):
@@ -94,13 +121,15 @@ class ParentScreen1(Screen):
 
       self.parent.current="parent_screen_2"
     else:
-      custom_popup = CustomPopup(
-        title="Login Unsuccessful",
-        title_color=(250/255,160/255,127/255),
-        separator_color=(250/255,160/255,127/255),
-        title_size=self.width*.03
-        )
-      custom_popup.open()
+      failboxlogin = FailBoxLogin(response_status=str(response_login.status_code))
+      self.add_widget(failboxlogin)
+      # custom_popup = CustomPopup(
+      #   title="Login Unsuccessful",
+      #   title_color=(250/255,160/255,127/255),
+      #   separator_color=(250/255,160/255,127/255),
+      #   title_size=self.width*.03
+      #   )
+      # custom_popup.open()
 
   def show_password(self,toggle_widget):
     if toggle_widget.state=='down':
@@ -111,7 +140,41 @@ class ParentScreen1(Screen):
       self.md_txt_field_password.password = True
 
 
-class ShowPasswordToggle(MDFillRoundFlatButton, MDToggleButton):
+class ShowPasswordToggle(MDFillRoundFlatButton, MDToggleButton): ...
+  # def __init__(self, **kwargs):
+  #   super().__init__(**kwargs)
+    # self.background_down = self.theme_cls.primary_light
+class RegisterLabel(ButtonBehavior, Label):
+  def on_press(self):
+    webbrowser.open('https://what-sticks-health.com/register')
+
+
+
+class AnchorClickable_login(TouchRippleBehavior, ButtonBehavior, AnchorLayout):
   def __init__(self, **kwargs):
-    super().__init__(**kwargs)
-    self.background_down = self.theme_cls.primary_light
+    super(AnchorClickable_login, self).__init__(**kwargs)
+
+  def on_touch_down(self, touch):
+    collide_point = self.collide_point(touch.x, touch.y)
+    if collide_point:
+      touch.grab(self)
+      self.ripple_duration_in = 0.7
+      self.ripple_scale = 0.1
+      self.ripple_show(touch)
+      print('Login on_touch_down')
+      Clock.schedule_once(self.open_site,1)
+      # webbrowser.open('https://what-sticks-health.com/register')
+      return True
+    return False
+
+  def on_touch_up(self, touch):
+    if touch.grab_current is self:
+      touch.ungrab(self)
+      self.ripple_duration_out = 0.4
+      self.ripple_fade()
+      return True
+    return False
+
+
+  def open_site(self, *args):
+    webbrowser.open('https://what-sticks-health.com/register')
