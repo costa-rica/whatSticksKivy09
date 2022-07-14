@@ -71,6 +71,15 @@ class AreYouSureBox(BoxLayout):
     self.text_fitter_button_util(self.btn_yes)
     self.text_fitter_button_util(self.btn_no)
 
+    Clock.schedule_once(self.font_size_title, .01)
+
+  def font_size_title(self, *args):
+    while self.label_title.texture_size[0] > self.width * .9:
+      self.label_title.font_size -= .25
+      self.label_title.texture_update()
+
+
+
   def no_btn_util(self):
     print('no_btn_util')
     self.parent.remove_widget(self)
@@ -167,6 +176,13 @@ class ConfirmBox(BoxLayout):
     text_fitter_label_util(self.label_title)
     text_fitter_button_util(self.btn_ok)
 
+    Clock.schedule_once(self.font_size_title, .01)
+
+  def font_size_title(self, *args):
+    while self.label_title.texture_size[0] > self.width * .9:
+      self.label_title.font_size -= .25
+      self.label_title.texture_update()
+
   def ok_btn_util(self):
     print('ok_btn_util')
     self.main_box.reset_screen()
@@ -199,6 +215,7 @@ class FailBox(BoxLayout):
   ps1_base_height=ObjectProperty(0)
   on_size_count=ObjectProperty(0)
   response_status=StringProperty()
+
   def __init__(self,**kwargs):
     super().__init__(**kwargs)
     print('****** FailBox __init__')
@@ -222,6 +239,14 @@ class FailBox(BoxLayout):
       self.label_title.text = "Something went wrong. Try again later\nor contact nick@dashanddata.com."
     text_fitter_label_util(self.label_title)
     text_fitter_button_util(self.btn_ok)
+
+    Clock.schedule_once(self.font_size_title, .01)
+
+  def font_size_title(self, *args):
+    while self.label_title.texture_size[0] > self.width * .9:
+      self.label_title.font_size -= .25
+      self.label_title.texture_update()
+
 
   def ok_btn_util(self):
     print('ok_btn_util')
@@ -259,7 +284,15 @@ class FailBoxLogin(BoxLayout):
     text_fitter_label_util(self.label_title)
     text_fitter_button_util(self.btn_ok)
 
+    Clock.schedule_once(self.font_size_title, .01)
+
+  def font_size_title(self,*args):
+    while self.label_title.texture_size[0] > self.width * .9:
+      self.label_title.font_size -= .25
+      self.label_title.texture_update()
+
+
+
   def ok_btn_util(self):
     print('ok_btn_util')
-    # self.main_box.reset_screen()
     self.parent.remove_widget(self)

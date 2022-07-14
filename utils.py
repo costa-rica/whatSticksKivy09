@@ -51,9 +51,7 @@ def table_api_util(login_token):
   response = requests.request('GET',url_get_activities, headers=headers)
   response_dict = json.loads(response.text)
 
-  # row_data_list=[
-  #   [i[0],convert_datetime(i[1]),i[2], make_date_string(i[1]),h] for h,i in enumerate(response_dict['content'])
-  #   ]
+
 
   row_data_list = []
   for h, i in enumerate(response_dict['content']):

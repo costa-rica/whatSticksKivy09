@@ -52,7 +52,7 @@ class MainBoxLayout(BoxLayout):
     self.label_email.size_hint=(None,None)
     self.label_email.font_size=self.ps1_base_height * size_dict['label_email']['font_size'][self.sc]
     #check make sure email label isn't bigger than width of screen
-    self.font_size_email_label()
+    Clock.schedule_once(self.font_size_email_label,.01)
     self.label_email.size= self.label_email.texture_size
 
     self.anchor_email.anchor_x="right"
@@ -77,6 +77,11 @@ class MainBoxLayout(BoxLayout):
     self.label_act_name.size = self.label_act_name.texture_size
 
     self.anchor_email.height=self.label_email.texture_size[1]
+    # Clock.schedule_once(self.font_size_email_label,.01)
+    print('* EMAIL SET in get_size *')
+    print('self.label_email.width/texture[0]:', self.label_email.width, self.label_email.texture_size[0])
+    print('self.ps1_base_width * .5:', self.ps1_base_width * .5)
+
 
     self.input_act_name.font_size=self.ps1_base_width * size_dict['input_act_name']['font_size'][self.sc]
     self.input_act_name.height = self.label_act_name.height
@@ -193,11 +198,20 @@ class MainBoxLayout(BoxLayout):
     self.input_date.text = datetime.datetime.now().strftime("%m/%d/%Y")
     self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
 
-  def font_size_email_label(self):
-    while self.label_email.texture_size[0] > self.ps1_base_width * .5 or \
+  def font_size_email_label(self,*args):
+    # while self.label_email.texture_size[0] > self.ps1_base_width * .5:
+    #   self.label_email.font_size -= .25
+    #   self.label_email.texture_update()
+    #
+
+    while self.label_email.texture_size[0] > self.ps1_base_width * .9 or \
       self.label_email.texture_size[1] > self.ps1_base_height * .07:
       self.label_email.font_size -= .25
       self.label_email.texture_update()
+
+    print('EMAIL SET in font_size_email_label *')
+    print('self.label_email.width/texture[0]:', self.label_email.width, self.label_email.texture_size[0])
+    print('self.ps1_base_width * .5:', self.ps1_base_width * .5)
 
 
 

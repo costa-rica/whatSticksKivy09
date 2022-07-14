@@ -74,7 +74,8 @@ class ParentScreen1(Screen):
 
       # self.label_register.size_hint_y = .35
       # self.label_register.size_hint_x
-      self.label_register.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2] *.5
+      self.label_register.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2] *.75
+
 
 
 
@@ -83,7 +84,12 @@ class ParentScreen1(Screen):
 
   def size_kids_2(self,*args):
     #set size of image
+    self.image_wsh.size_hint = (None,None)
     self.image_wsh.size = self.image_wsh.texture_size
+    # print('self.label_app_name.height :', self.label_app_name.height )
+    # print('self.image_wsh.size :', self.image_wsh.size )
+    Clock.schedule_once(self.size_image,.01)
+    # self.image_wsh.size[1]=200
 
     # set size of label
     self.label_app_name.size_hint_x = None
@@ -139,6 +145,15 @@ class ParentScreen1(Screen):
       self.show_password_toggle.text="Show password"
       self.md_txt_field_password.password = True
 
+  def size_image(self,*args):
+    self.image_wsh.texture_update()
+    while self.image_wsh.size[1] > self.label_app_name.height * .5 and \
+      self.image_wsh.height > 2 :
+      self.image_wsh.size[1] -= .25
+      self.image_wsh.texture_update()
+      # print('self.image_wsh.height:', self.image_wsh.height)
+      # print('self.image_wsh.texture_size[1]:', self.image_wsh.texture_size[1])
+      # print('self.label_app_name.height * .5 :', self.label_app_name.height * .5 )
 
 class ShowPasswordToggle(MDFillRoundFlatButton, MDToggleButton): ...
   # def __init__(self, **kwargs):

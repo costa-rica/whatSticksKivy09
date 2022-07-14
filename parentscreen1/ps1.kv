@@ -47,9 +47,17 @@
           id: label_app_name
           text:"What Sticks"
 
-        Image:
-          id: image_wsh
-          source: 'images/icon.png'
+        AnchorLayout:
+          anchor_y: 'center'
+          Image:
+            id: image_wsh
+            source: 'images/icon.png'
+            # canvas.before:
+            #   Color:
+            #     rgb: [100/255,200/255,100/255]
+            #   Rectangle:
+            #     pos: self.pos
+            #     size: self.size
 
 
     AnchorLayout:#App Email
@@ -109,7 +117,7 @@
           Label:
             id: label_register
             text:"Register here"
-            color:.2,.2,.2,1
+            color:.2,.2,.4,1
 
 
         MDFillRoundFlatButton:
@@ -133,13 +141,13 @@
         on_press:
           app.stop()
 
-
-
-<CustomPopup>:
-  size_hint:.4,.3
-  AnchorLayout:
-    Button:
-      size_hint:.8,.4
-      text:"OK"
-      on_press:
-        root.dismiss()
+#
+#
+# <CustomPopup>:
+#   size_hint:.4,.3
+#   AnchorLayout:
+#     Button:
+#       size_hint:.8,.4
+#       text:"OK"
+#       on_press:
+#         root.dismiss()

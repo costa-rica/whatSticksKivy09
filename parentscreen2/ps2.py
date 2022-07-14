@@ -42,6 +42,7 @@ class ParentScreen2(Screen):
     self.table_box.ps1_base_height = self.parent.ps1_base_height
     self.table_box.login_token = self.parent.login_token
     self.table_box.user_id = self.parent.id
+    self.table_box.email = self.parent.email
 
   #Get data from apip and pass it to the table_box
     self.table_box.row_data_list = table_api_util(self.table_box.login_token)
@@ -82,8 +83,8 @@ class ParentScreen2(Screen):
     try:
       self.table_box.sc =  self.main_box.sc
       self.table_box.size_rows_util()
-      self.table_box.size_email()
 
+      self.table_box.size_email()
       Clock.schedule_once(self.table_box.size_email_2,.01)
 
     except AttributeError:

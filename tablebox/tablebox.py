@@ -46,7 +46,7 @@ class TableBox(BoxLayout):
   def on_size(self,*args):
     print('****   TableBox on_size: ', self.on_size_count)
     if self.on_size_count == 2:
-      self.label_email_ts.text = "nickapeed@yahoo.com"
+      self.label_email_ts.text = self.email
 
       self.label_act_count.text = "Activities count: **"
 
@@ -117,7 +117,7 @@ class TableBox(BoxLayout):
   def make_rows_frame(self,*args):
     # print('self.scroll_view.x;::', self.scroll_view.x)
     with self.scroll_view.canvas.before:
-      Color(.3,.3,.3)
+      Color(.1,.1,.1)
       Rectangle(pos=(self.scroll_view.x,self.scroll_view.y),
         size=(self.ps1_base_width * .014,self.scroll_view.height))###
       Rectangle(pos=(self.scroll_view.right-(self.ps1_base_width * .014),self.scroll_view.y),
@@ -400,10 +400,7 @@ class TableBox(BoxLayout):
   #  Email / Screen Name I
     self.label_email_ts.size_hint=(None,None)
     self.label_email_ts.font_size=self.ps1_base_height * size_dict['label_email']['font_size'][self.sc]
-    # print('self.label_email_ts.font_size:', self.label_email_ts.font_size)
-    # self.label_email_ts.size_hint=(None,None)
-    # self.label_email_ts.font_size=100
-    # Clock.schedule_once(self.size_email_2, .01)
+
 
   def size_email_2(self,*args):
     self.font_size_email_label()
@@ -414,11 +411,9 @@ class TableBox(BoxLayout):
     self.anchor_email_ts.size_hint_y=None
     self.anchor_email_ts.height = self.ps1_base_height * .07
 
-    # print('self.label_email_ts.texture_size[0]::', self.label_email_ts.texture_size[0])
-    # print('self.ps1_base_width * .5 :::', self.ps1_base_width * .5 )
 
   def font_size_email_label(self):
-    while self.label_email_ts.texture_size[0] > self.ps1_base_width * .5 or \
+    while self.label_email_ts.texture_size[0] > self.ps1_base_width * .9 or \
       self.label_email_ts.texture_size[1] > self.ps1_base_height * .07:
 
       self.label_email_ts.font_size -= .25
