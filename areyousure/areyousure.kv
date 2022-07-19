@@ -1,3 +1,52 @@
+
+<FailBoxLogin_2>
+  box_popup: box_popup
+  label_title: label_title
+  anchor_popup: anchor_popup
+  index: 0
+
+  BoxLayout:
+    id: box_popup
+    orientation: 'vertical'
+    size_hint: None,None
+    size: (root.popup_width, root.popup_height)
+    canvas.before:
+      Color:
+        rgb: [.5,.7,.5]
+      RoundedRectangle:
+        pos: self.pos
+        size: (root.popup_width, root.popup_height)
+        radius: [(5,5),(5,5),(5,5),(5,5)]
+      Color:
+        rgb: [.3,.3,.3]
+      RoundedRectangle:
+        pos: (self.x + (root.popup_width * .03 * .5), self.y + root.anchor_popup.height)
+        size: (root.popup_width * .97, 3)
+        radius: [(2,2),(2,2),(2,2),(2,2)]
+    Label:
+      id: label_title
+      text: "You can do this!"
+      # size_hint: (1, .3)
+
+    PopupAnchor
+      id: anchor_popup
+      size_hint: None,None
+      # size_hint: (1, .7)
+
+<PopupAnchor>
+  btn_popup: btn_popup
+  Button:
+    id: btn_popup
+    index: 1
+    text: 'dismiss'
+    on_press:
+      root.button_pressed()
+
+
+
+### Old Stuff ####
+
+
 <AreYouSureBox>:
   label_title: label_title
   btn_yes: btn_yes
@@ -122,3 +171,44 @@
       id: btn_ok
       text: "ok"
       on_press: root.ok_btn_util()
+
+<CanvasWidget>
+  # width: ps1_base_width
+  # height: ps1_base_height
+
+<CustomBox>
+  label_title: label_title
+  orientation: "vertical"
+  size_hint: None,None
+  width: root.ps1_base_width * .5
+  height: root.ps1_base_height * .4
+  # pos_hint: {"center_x":.5,"center_y":.5}
+  # canvas.before:
+  #   CanvasWidget
+    # Color:
+    #   rgba: [.1,.1,.1,.8]
+    # Rectangle:
+    #   # pos:self.x,self.top
+    #   size: root.ps1_base_width, root.ps1_base_height
+  canvas:
+    Color:
+      rgba: [.7,.3,.03,1]
+    RoundedRectangle:
+      pos:  self.pos
+      size: self.size
+      radius: [(5, 5), (5, 5), (5, 5), (5, 5)]
+  Label:
+    id: label_title
+  BoxLayout:
+
+    Button:
+      id: btn_ok
+      text: "OK"
+      on_press: root.ok_btn_util()
+    # Button:
+    #   text: "CustomBox info"
+    #   on_press:
+    #     print('root.pos_hint:', root.pos_hint)
+    #     print('root.size:', root.size)
+    #     print('root.parent.size:', root.parent.size)
+    #     print('root.ps1_base_height:', root.ps1_base_height)

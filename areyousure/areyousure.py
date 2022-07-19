@@ -1,6 +1,6 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from size_dict import size_dict
@@ -13,10 +13,11 @@ from kivy.graphics import Color, Rectangle
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import time
-
 from kivy.clock import Clock
-
 from utils import table_api_util, delete_row_util
+
+from kivy.uix.modalview import ModalView
+from kivy.uix.anchorlayout import AnchorLayout
 
 Builder.load_file('areyousure/areyousure.kv')
 
@@ -37,6 +38,77 @@ def text_fitter_button_util(thing):
     thing.texture_update()
 
   return thing.font_size
+
+
+
+class FailBoxLogin_2(ModalView):
+  anchor_popup = ObjectProperty(AnchorLayout())
+  popup_width = NumericProperty()
+  popup_height = NumericProperty()
+
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+    # print('FailBoxLogin_2 __init__')
+    # self.index = 1
+
+
+  def on_size(self, *args):
+    # print('** FailBoxLogin_2 on_size')
+
+    self.popup_width = self.width * .5
+    self.popup_height = self.height * .25
+    self.anchor_popup.width = self.popup_width
+    self.anchor_popup.height = self.popup_height * .7
+
+
+    self.label_title.size_hint = (None,None)
+    self.label_title.size = (self.popup_width,self.popup_height)
+    self.label_title.y = self.anchor_popup.height + 3
+
+  def on_touch_down(self, touch):
+
+    if not self.anchor_popup.collide_point(*touch.pos):
+      print('touched Modal')
+
+      self.parent.remove_widget(self)
+    return super().on_touch_down(touch)
+
+class PopupAnchor(AnchorLayout):
+  popup_width = NumericProperty()
+  popup_height = NumericProperty()
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+    # print('** PopupAnchor __init__')
+    self.size_hint = (None,None)
+    # self.index = 0
+
+    # self.width = self.popup_width
+    # self.height = self.popup_height
+    # print('self.popup_width:', self.popup_width)
+    # print('self.popup_height:', self.popup_height)
+  #
+  # def on_touch_down(self, touch):
+  #   if self.collide_point(*touch.pos):
+  #     print('touched anchor')
+  # #
+  # #     self.parent.remove_widget(self)
+  #   return super().on_touch_down(touch)#This allows the children to recieve touch
+  #   # return True# This is key to "digest the event and stop it propagate further"
+
+
+  def button_pressed(self):
+    print('pressed button')
+    self.failbox2 = self.parent.parent
+    self.ps1 = self.parent.parent.parent
+
+    Clock.schedule_once(self.remove_popup,.1)
+
+  def remove_popup(self,*args):
+    self.ps1.remove_widget(self.failbox2)
+
+
+
+### Old Stuff ###
 
 
 class AreYouSureBox(BoxLayout):
@@ -291,8 +363,78 @@ class FailBoxLogin(BoxLayout):
       self.label_title.font_size -= .25
       self.label_title.texture_update()
 
-
-
   def ok_btn_util(self):
     print('ok_btn_util')
     self.parent.remove_widget(self)
+
+
+
+class CustomBox(BoxLayout):
+  ps1_base_width=ObjectProperty(0)
+  ps1_base_height=ObjectProperty(0)
+  on_size_count=ObjectProperty(0)
+  title=StringProperty()
+
+  def __init__(self,**kwargs):
+    super().__init__(**kwargs)
+    self.label_title.text = self.title
+    self.pos_hint ={"center_x":.5,"center_y":.5}
+    # background_custom = CanvasWidget(ps1_base_width=self.ps1_base_width,
+    #   ps1_base_height= self.ps1_base_height)
+    # self.background_custom =CanvasWidget(ps1_base_width=self.ps1_base_width,ps1_base_height= self.ps1_base_height)
+
+
+    # with self.canvas.before:
+    #   self.background_custom
+      # CanvasWidget(ps1_base_width=self.ps1_base_width,
+      #   ps1_base_height= self.ps1_base_height)
+
+      # Color(.1,.1,.1,.8)
+      # self.rect=Rectangle(pos=(0,0),
+      #   size=(self.ps1_base_width, self.ps1_base_height))
+      # self.canvas.bind(on_touch_down = self.touched_canvas)
+
+  def touched_canvas(self,*args):
+    print('touchted cavanassssss')
+
+  def ok_btn_util(self):
+    print('ok_btn_util')
+    self.parent.remove_widget(self.parent.children[1])
+    self.parent.remove_widget(self)
+
+    # print(self.parent.children)
+
+
+class CanvasWidget(Widget):
+  ps1_base_width=ObjectProperty(0)
+  ps1_base_height=ObjectProperty(0)
+  # screen_pos = ObjectProperty((0,0))
+  def __init__(self,**kwargs):
+    super().__init__(**kwargs)
+    # self.ps1_base_width = 0
+    # self.ps1_base_height = 0
+
+
+  def on_size(self,*args):
+    # self.ps1_base_width = self.parent.ps1_base_width
+    # self.ps1_base_height = self.parent.ps1_base_height
+    self.size_hint = (None,None)
+    self.width = self.ps1_base_width
+    self.height = self.ps1_base_height
+
+    with self.canvas:
+      Color(.1,.1,.1,.8)
+      self.rect=Rectangle(pos=(0,0),
+        size=(self.ps1_base_width, self.ps1_base_height))
+
+
+  def on_touch_down(self,touch):
+    print(self)
+    print(dir(touch))
+
+      # self.bind(pos=self.update_rect,
+      #               size=self.update_rect)
+
+  # def update_rect(self, *args):
+  #   self.rect.pos = (0,0)
+  #   self.rect.size = (self.ps1_base_width, self.ps1_base_height)

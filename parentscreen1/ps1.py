@@ -13,7 +13,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors.touchripple import TouchRippleBehavior
-from areyousure.areyousure import FailBoxLogin
+from areyousure.areyousure import FailBoxLogin_2
 
 from size_dict import size_dict
 
@@ -43,9 +43,12 @@ class ParentScreen1(Screen):
 
   def size_kids(self,*args):
     print('ParentScreen1 size_widgets')
+
     if self.call_count >0:
       self.ps1_base_width=self.width
       self.ps1_base_height=self.height
+
+
 
 
   #Size widgets based on size_dict parameters
@@ -99,7 +102,9 @@ class ParentScreen1(Screen):
     self.box_app_name.width = self.label_app_name.width + self.image_wsh.width
 
     # self.label_register.size = self.label_register.texture_size
-
+#### REMOVE before publishing ###
+    self.md_txt_field_email.text = 'nickapeed@yahoo.com'
+    self.md_txt_field_password.text = 'tes'
 
 
   def verify_user(self):
@@ -127,8 +132,13 @@ class ParentScreen1(Screen):
 
       self.parent.current="parent_screen_2"
     else:
-      failboxlogin = FailBoxLogin(response_status=str(response_login.status_code))
-      self.add_widget(failboxlogin)
+      # failboxlogin = FailBoxLogin(response_status=str(response_login.status_code))
+      self.failboxlogin = FailBoxLogin_2()
+      # self.failboxlogin.open()
+      self.add_widget(self.failboxlogin)
+
+
+
       # custom_popup = CustomPopup(
       #   title="Login Unsuccessful",
       #   title_color=(250/255,160/255,127/255),

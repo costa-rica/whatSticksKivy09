@@ -14,8 +14,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import time
 
-from areyousure.areyousure import AreYouSureBox
-
+from areyousure.areyousure import AreYouSureBox, CustomBox, CanvasWidget
+from kivy.uix.popup import Popup
 
 Builder.load_file('tablebox/tablebox.kv')
 
@@ -44,7 +44,7 @@ class TableBox(BoxLayout):
     self.dialog_rows = None
 
   def on_size(self,*args):
-    print('****   TableBox on_size: ', self.on_size_count)
+    # print('****   TableBox on_size: ', self.on_size_count)
     if self.on_size_count == 2:
       self.label_email_ts.text = self.email
 
@@ -64,7 +64,7 @@ class TableBox(BoxLayout):
     self.on_size_count += 1
 
   def size_kids(self,*args):
-    print('-- TableBox size_kids --')
+    # print('-- TableBox size_kids --')
 
   #  Email / Screen Name I
     self.size_email()
@@ -134,7 +134,7 @@ class TableBox(BoxLayout):
         size=(self.ps1_base_width,border_thinkness))
 
   def build_rows_util(self):
-    print('Tablebox build_rows_util')
+    # print('Tablebox build_rows_util')
     self.rowbox_dict={}
 
     row_data = self.row_data_filtered
@@ -267,7 +267,7 @@ class TableBox(BoxLayout):
     row_data = self.row_data_filtered
 
     if widget.text[:2]=='ID':
-      print('****** We should be getting in this IF statement****')
+      # print('****** We should be getting in this IF statement****')
       if self.id_sort_counter % 3 == 0:# ascending
         widget.background_color = (.45,.55,.8,1)
         widget.text = 'ID\nascending'
@@ -391,9 +391,37 @@ class TableBox(BoxLayout):
     if self.input_row.text.isnumeric():
       desired_row = int(self.input_row.text)
       self.scroll_view.scroll_y = desired_row / len(self.row_data_filtered)
-    #   print('jumped to ', desired_row/ len(self.row_data_filtered))
-    # else:
-    #   print('Not numeric')
+
+    else:
+      popup = Popup(title='',
+      content=Label(text=''),
+      size_hint=(None, None), size=(400, 400), title_color = (1,.3,.3),background = 'images/paper-square.png',
+      separator_color = (1,1,1,0))
+      popup.open()
+
+  # # Old CustomPopup
+  #     help_box = CustomBox(ps1_base_width= self.ps1_base_width,
+  #       ps1_base_height = self.ps1_base_height,
+  #       title = 'Enter a row number\n you wish to go to.')
+  #     popup_background = CanvasWidget(ps1_base_width= self.ps1_base_width,
+  #       ps1_base_height = self.ps1_base_height)
+  #     self.parent.add_widget(popup_background)
+  #     self.parent.add_widget(help_box)
+
+
+
+  def size_go_btn(self, *args):
+    while self.btn_go_to_row.texture_size[1] < self.btn_go_to_row.height * .85:
+      self.btn_go_to_row.font_size += .2
+      self.btn_go_to_row.texture_update()
+
+    while self.btn_go_to_row.texture_size[1] > self.btn_go_to_row.height *.95 :
+      self.btn_go_to_row.font_size -= .2
+      self.btn_go_to_row.texture_update()
+
+    self.input_row.font_size =self.btn_go_to_row.font_size
+    # return self.btn_go_to_row.font_size
+
 
 ### ALL Size Defs #########
   def size_email(self):
@@ -507,6 +535,9 @@ class TableBox(BoxLayout):
     self.btn_top.font_size = self.ps1_base_width * .06###
     self.btn_bottom.font_size = self.ps1_base_width * .06###
 
+    # nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
+    # self.input_row.font_size = nav_font_size
+
   def size_nav_buttons_2(self):
     self.label_table_nav.size = self.label_table_nav.texture_size
     self.anchor_table_nav_label.anchor_x = "left"
@@ -518,12 +549,14 @@ class TableBox(BoxLayout):
       self.ps1_base_height * .02,
       0,self.ps1_base_height * .01)###
 
-    nav_font_size = self.text_fitter_content_util(self.btn_go_to_row)
 
-    self.input_row.font_size = nav_font_size
     self.input_row.padding=(30,0,0,0)###
 
     self.btn_top.height = self.ps1_base_height * .07
     self.btn_bottom_height = self.ps1_base_height * .07
     self.box_table_nav.height = self.anchor_table_nav_label.height + \
       self.btn_top.height + self.btn_bottom.height
+
+    Clock.schedule_once(self.size_go_btn,.01)
+
+    # self.input_row.font_size = nav_font_size
