@@ -13,15 +13,13 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors.touchripple import TouchRippleBehavior
-from areyousure.areyousure import FailBoxLogin_2
+from areyousure.areyousure import ModalNoResponse
 
 from size_dict import size_dict
 
 import requests
 import json
 import webbrowser
-
-# from utils import text_size_coef_utility
 
 Builder.load_file('parentscreen1/ps1.kv')
 
@@ -48,20 +46,14 @@ class ParentScreen1(Screen):
       self.ps1_base_width=self.width
       self.ps1_base_height=self.height
 
-
-
-
   #Size widgets based on size_dict parameters
       self.anchor_app_name.height = self.ps1_base_height * size_dict['anchor_app_name']['height'][2]
       self.label_app_name.font_size = self.ps1_base_width * size_dict['label_app_name']['font_size'][2]
-
-
 
       self.anchor_email_ps1.height = self.ps1_base_height * size_dict['anchor_email_ps1']['height'][2]
 
       self.anchor_email_ps1.padding = (self.ps1_base_width * size_dict['anchor_email_ps1']['padding-left'][2],0,
         self.ps1_base_width * size_dict['anchor_email_ps1']['padding-right'][2],0)
-
 
       self.md_txt_field_email.font_size = self.ps1_base_width * size_dict['md_txt_field_email']['font_size'][2]
       self.anchor_password.height = self.ps1_base_height * size_dict['anchor_password']['height'][2]
@@ -75,12 +67,7 @@ class ParentScreen1(Screen):
       self.anchor_exit.padding = (0,0,self.ps1_base_width * size_dict['anchor_exit']['padding-right'][2],0)
       self.btn_exit.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2]
 
-      # self.label_register.size_hint_y = .35
-      # self.label_register.size_hint_x
       self.label_register.font_size = self.ps1_base_width * size_dict['btn_exit']['font_size'][2] *.75
-
-
-
 
       Clock.schedule_once(self.size_kids_2)
     self.call_count+=1
@@ -89,10 +76,8 @@ class ParentScreen1(Screen):
     #set size of image
     self.image_wsh.size_hint = (None,None)
     self.image_wsh.size = self.image_wsh.texture_size
-    # print('self.label_app_name.height :', self.label_app_name.height )
-    # print('self.image_wsh.size :', self.image_wsh.size )
+
     Clock.schedule_once(self.size_image,.01)
-    # self.image_wsh.size[1]=200
 
     # set size of label
     self.label_app_name.size_hint_x = None
@@ -101,19 +86,18 @@ class ParentScreen1(Screen):
     self.box_app_name.size_hint_x = None
     self.box_app_name.width = self.label_app_name.width + self.image_wsh.width
 
-    # self.label_register.size = self.label_register.texture_size
 #### REMOVE before publishing ###
-    self.md_txt_field_email.text = 'nickapeed@yahoo.com'
-    self.md_txt_field_password.text = 'tes'
+    # self.md_txt_field_email.text = 'nickapeed@yahoo.com'
+    # self.md_txt_field_password.text = 
 
 
   def verify_user(self):
     base_url = 'https://api.what-sticks-health.com'
-    response_login = requests.request('GET',base_url + '/login',
+    self.response_login = requests.request('GET',base_url + '/login',
         auth=(self.md_txt_field_email.text,self.md_txt_field_password.text))
-    print('response_login.status_code:::', response_login.status_code)
-    if response_login.status_code ==200:
-      login_token = json.loads(response_login.content.decode('utf-8'))['token']
+
+    if self.response_login.status_code ==200:
+      login_token = json.loads(self.response_login.content.decode('utf-8'))['token']
 
       url_user_data = base_url + "/user_account_data"
       headers = {'x-access-token': login_token,'Content-Type': 'application/json'}
@@ -131,21 +115,14 @@ class ParentScreen1(Screen):
 
 
       self.parent.current="parent_screen_2"
-    else:
-      # failboxlogin = FailBoxLogin(response_status=str(response_login.status_code))
-      self.failboxlogin = FailBoxLogin_2()
-      # self.failboxlogin.open()
+    elif self.response_login.status_code == 401:
+      self.failboxlogin = ModalNoResponse(line_color = (.5,.3,.3),
+      message = "Wrong Email or Password.")
       self.add_widget(self.failboxlogin)
-
-
-
-      # custom_popup = CustomPopup(
-      #   title="Login Unsuccessful",
-      #   title_color=(250/255,160/255,127/255),
-      #   separator_color=(250/255,160/255,127/255),
-      #   title_size=self.width*.03
-      #   )
-      # custom_popup.open()
+    else:
+      message = f"Something went wrong.\nTry again later or contact\nnick@dashanddata.com.\nstatus code:{self.response_login.status_code}"
+      self.failboxlogin = ModalNoResponse(line_color = (.5,.3,.3), message = message)
+      self.add_widget(self.failboxlogin)
 
   def show_password(self,toggle_widget):
     if toggle_widget.state=='down':
@@ -161,18 +138,14 @@ class ParentScreen1(Screen):
       self.image_wsh.height > 2 :
       self.image_wsh.size[1] -= .25
       self.image_wsh.texture_update()
-      # print('self.image_wsh.height:', self.image_wsh.height)
-      # print('self.image_wsh.texture_size[1]:', self.image_wsh.texture_size[1])
-      # print('self.label_app_name.height * .5 :', self.label_app_name.height * .5 )
+
 
 class ShowPasswordToggle(MDFillRoundFlatButton, MDToggleButton): ...
-  # def __init__(self, **kwargs):
-  #   super().__init__(**kwargs)
-    # self.background_down = self.theme_cls.primary_light
+
+
 class RegisterLabel(ButtonBehavior, Label):
   def on_press(self):
     webbrowser.open('https://what-sticks-health.com/register')
-
 
 
 class AnchorClickable_login(TouchRippleBehavior, ButtonBehavior, AnchorLayout):

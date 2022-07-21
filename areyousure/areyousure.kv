@@ -1,9 +1,83 @@
+<ModalNoResponse>
+  label_title: label_title
+  box_popup: box_popup
+  BoxLayout:
+    id: box_popup
+    orientation: 'vertical'
+    size_hint: .5,.3
+
+    canvas.before:
+      Color:
+        rgb: [.5,.5,.5]
+        # rgb: root.line_color
+      RoundedRectangle:
+        pos: self.pos
+        size: self.size
+        radius: [(5,5),(5,5),(5,5),(5,5)]
+      Color:
+        # rgb: [.5,.3,.3]
+        rgb: root.line_color
+      RoundedRectangle:
+        pos: (self.x + (self.width * .03 * .5), self.y + self.height*.85)
+        size: (self.width * .97, 3)
+        radius: [(2,2),(2,2),(2,2),(2,2)]
+    Label:
+      id: label_title
+      text: "You can do this!"
+
+
+<ModalButtonResponse>
+  label_title: label_title
+  box_popup: box_popup
+  box_yes_no: box_yes_no
+  btn_yes: btn_yes
+  btn_no: btn_no
+  BoxLayout:
+    id: box_popup
+    orientation: 'vertical'
+    size_hint: .5,.3
+
+    canvas.before:
+      Color:
+        rgb: [.5,.5,.5]
+        # rgb: root.line_color
+      RoundedRectangle:
+        pos: self.pos
+        size: self.size
+        radius: [(5,5),(5,5),(5,5),(5,5)]
+      Color:
+        # rgb: [.5,.3,.3]
+        rgb: root.line_color
+      RoundedRectangle:
+        pos: (self.x + (self.width * .03 * .5), self.y + self.height*.7)
+        size: (self.width * .97, 3)
+        radius: [(2,2),(2,2),(2,2),(2,2)]
+    Label:
+      id: label_title
+      size_hint: 1, box_popup.height * .3
+      text: "You can do this!"
+
+    BoxLayout:
+      id: box_yes_no
+      size_hint: (1, box_popup.height * .7)
+      Button:
+        id: btn_yes
+        text: "Yes"
+        on_press: root.yes_btn_util()
+      Button:
+        id: btn_no
+        text: "No"
+        on_press: root.no_btn_util()
+
+
+
+
+#########
 
 <FailBoxLogin_2>
   box_popup: box_popup
   label_title: label_title
   anchor_popup: anchor_popup
-  index: 0
 
   BoxLayout:
     id: box_popup

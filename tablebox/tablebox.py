@@ -14,8 +14,9 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import time
 
-from areyousure.areyousure import AreYouSureBox, CustomBox, CanvasWidget
-from kivy.uix.popup import Popup
+from areyousure.areyousure import ModalButtonResponse, ModalNoResponse
+# from kivy.uix.popup import Popup
+from utils import table_api_util
 
 Builder.load_file('tablebox/tablebox.kv')
 
@@ -208,8 +209,26 @@ class TableBox(BoxLayout):
     print('widget:', widget.name)
     print('self.parent.parent.parent:', self.parent)
 
-    self.areyousure = AreYouSureBox(delete_btn = widget)
+    # self.areyousure = AreYouSureBox(delete_btn = widget)
+    self.areyousure = ModalButtonResponse(line_color = (.5,.3,.3),
+      trigger_widget_name = widget.name, login_token = self.login_token)
+
     self.parent.add_widget(self.areyousure)
+
+  def delete_row_table_reload(self, trigger_widget_name):
+    counter = 0
+    # remove the boxrow with the
+    for key, rowbox in self.rowbox_dict.items():
+      counter += 1
+      if rowbox.btn_delete_rb.name == trigger_widget_name:
+        self.grid_table.remove_widget(rowbox)
+        key_to_delete = key
+        break
+
+    print('counter:::', counter)
+    self.row_data_list = table_api_util(self.login_token)
+    del self.rowbox_dict[key_to_delete]
+    self.label_act_count.text = f'Activites count: {len(self.rowbox_dict)}'
 
   def text_fitter_header_util(self):
     # this utility shrinks btn_header_count text until it fits with a 5% buffer
@@ -391,24 +410,25 @@ class TableBox(BoxLayout):
     if self.input_row.text.isnumeric():
       desired_row = int(self.input_row.text)
       self.scroll_view.scroll_y = desired_row / len(self.row_data_filtered)
-
+      self.input_row.text = ''
     else:
-      popup = Popup(title='',
-      content=Label(text=''),
-      size_hint=(None, None), size=(400, 400), title_color = (1,.3,.3),background = 'images/paper-square.png',
-      separator_color = (1,1,1,0))
-      popup.open()
-
-  # # Old CustomPopup
-  #     help_box = CustomBox(ps1_base_width= self.ps1_base_width,
-  #       ps1_base_height = self.ps1_base_height,
-  #       title = 'Enter a row number\n you wish to go to.')
-  #     popup_background = CanvasWidget(ps1_base_width= self.ps1_base_width,
-  #       ps1_base_height = self.ps1_base_height)
-  #     self.parent.add_widget(popup_background)
-  #     self.parent.add_widget(help_box)
 
 
+      self.failboxlogin = ModalNoResponse(line_color = (.5,.3,.3),
+      message = "Must enter a number")
+      self.parent.add_widget(self.failboxlogin)
+      # print(dir(self.input_row))
+      # self.input_row.select_text(start=0, end=len(self.input_row.text))
+      # self.input_row.focus = True
+      self.focus = True
+      self.input_row.focus = True
+      Clock.schedule_once(self.select_go_text, .01)
+      # self.input_row.select_all()
+
+  def select_go_text(self, *args):
+    print('select _go_text')
+
+    self.input_row.select_all()
 
   def size_go_btn(self, *args):
     while self.btn_go_to_row.texture_size[1] < self.btn_go_to_row.height * .85:

@@ -23,7 +23,7 @@ import webbrowser
 Builder.load_file('parentscreen2/ps2.kv')
 
 
-class NavMenu(BoxLayout):...
+class NavMenu(BoxLayout): ...
 
 
 class ParentScreen2(Screen):
@@ -50,10 +50,15 @@ class ParentScreen2(Screen):
   def on_enter(self):
     print('ParentScreen2 on_enter')
     act_screen = self.children[0].children[1].children[0]
+
+    # nav_menu = act_screen.parent.parent.children[0].children[0]
+
+    self.nav_menu.ps1_base_height = self.parent.ps1_base_height
+    self.nav_menu.anchor_version.padding = (0,0,self.nav_menu.width * .1, self.parent.ps1_base_height * .1)
+    self.nav_menu.label_version.font_size
+
     self.main_box = act_screen.children[0].children[0].children[1]
-
     self.main_box.label_email.text  = self.parent.email
-
     self.main_box.ps1_base_width=self.parent.ps1_base_width
     self.main_box.ps1_base_height=self.parent.ps1_base_height
     self.main_box.size_kids()
@@ -112,63 +117,77 @@ class ParentScreen2(Screen):
 
   def navmenu_font_size(self):
     print('navmenu_font_size')
-    self.navmenu.label_act_screen.text = "Add Activity"
-    self.navmenu.label_table_screen.text = "View Logged Activities"
-    self.navmenu.label_wsh_web.text = "Go to Website"
-    self.navmenu.label_exit.text = "Exit"
+    self.nav_menu.label_act_screen.text = "Add Activity"
+    self.nav_menu.label_table_screen.text = "View Logged Activities"
+    self.nav_menu.label_wsh_web.text = "Go to Website"
+    self.nav_menu.label_exit.text = "Exit"
+    self.nav_menu.label_version.text = "Version 0.64"
 
-    self.navmenu.label_table_screen.color = (.1,.1,.1)
-    self.navmenu.label_table_screen.size_hint = (None,None)
+    self.nav_menu.label_table_screen.color = (.1,.1,.1)
+    self.nav_menu.label_table_screen.size_hint = (None,None)
 
-    self.navmenu.label_act_screen.color = (.1,.1,.1)
-    self.navmenu.label_act_screen.size_hint = (None,None)
+    self.nav_menu.label_act_screen.color = (.1,.1,.1)
+    self.nav_menu.label_act_screen.size_hint = (None,None)
 
-    self.navmenu.label_wsh_web.color = (.1,.1,.1)
-    self.navmenu.label_wsh_web.size_hint = (None,None)
+    self.nav_menu.label_wsh_web.color = (.1,.1,.1)
+    self.nav_menu.label_wsh_web.size_hint = (None,None)
 
-    self.navmenu.label_exit.color = (.1,.1,.1)
-    self.navmenu.label_exit.size_hint = (None,None)
+    self.nav_menu.label_exit.color = (.1,.1,.1)
+    self.nav_menu.label_exit.size_hint = (None,None)
 
-    self.navmenu.anchor_act_screen_label.size_hint_y = None
-    self.navmenu.anchor_act_screen_label.height = self.navmenu.height * .1
-    self.navmenu.anchor_act_screen_label.anchor_x = "left"
-    self.navmenu.anchor_act_screen_label.padding = (self.navmenu.width * .02,0,0,0)
+    self.nav_menu.label_version.color = (.1,.1,.1)
+    self.nav_menu.label_version.size_hint = (None,None)
 
-    self.navmenu.anchor_table_screen_label.size_hint_y = None
-    self.navmenu.anchor_table_screen_label.height = self.navmenu.height * .1
-    self.navmenu.anchor_table_screen_label.anchor_x = "left"
-    self.navmenu.anchor_table_screen_label.padding = (self.navmenu.width * .02,0,0,0)
+    self.nav_menu.anchor_act_screen_label.size_hint_y = None
+    self.nav_menu.anchor_act_screen_label.height = self.nav_menu.height * .1
+    self.nav_menu.anchor_act_screen_label.anchor_x = "left"
+    self.nav_menu.anchor_act_screen_label.padding = (self.nav_menu.width * .02,0,0,0)
 
-    self.navmenu.anchor_wsh_web_label.size_hint_y = None
-    self.navmenu.anchor_wsh_web_label.height = self.navmenu.height * .1
-    self.navmenu.anchor_wsh_web_label.anchor_x = "left"
-    self.navmenu.anchor_wsh_web_label.padding = (self.navmenu.width * .02,0,0,0)
+    self.nav_menu.anchor_table_screen_label.size_hint_y = None
+    self.nav_menu.anchor_table_screen_label.height = self.nav_menu.height * .1
+    self.nav_menu.anchor_table_screen_label.anchor_x = "left"
+    self.nav_menu.anchor_table_screen_label.padding = (self.nav_menu.width * .02,0,0,0)
 
-    self.navmenu.anchor_exit_label.size_hint_y = None
-    self.navmenu.anchor_exit_label.height = self.navmenu.height * .1
-    self.navmenu.anchor_exit_label.anchor_x = "left"
-    self.navmenu.anchor_exit_label.padding = (self.navmenu.width * .02,0,0,0)
+    self.nav_menu.anchor_wsh_web_label.size_hint_y = None
+    self.nav_menu.anchor_wsh_web_label.height = self.nav_menu.height * .1
+    self.nav_menu.anchor_wsh_web_label.anchor_x = "left"
+    self.nav_menu.anchor_wsh_web_label.padding = (self.nav_menu.width * .02,0,0,0)
 
+    self.nav_menu.anchor_exit_label.size_hint_y = None
+    self.nav_menu.anchor_exit_label.height = self.nav_menu.height * .1
+    self.nav_menu.anchor_exit_label.anchor_x = "left"
+    self.nav_menu.anchor_exit_label.padding = (self.nav_menu.width * .02,0,0,0)
 
-    # self.navmenu.label_table_screen.font_size = menu_item_font_size
-    # self.navmenu.label_wsh_web.font_size = menu_item_font_size
-    # self.navmenu.label_exit.font_size = menu_item_font_size
-    self.fit_navmenu_item_util(self.navmenu.label_act_screen)
-    self.fit_navmenu_item_util(self.navmenu.label_table_screen)
-    self.fit_navmenu_item_util(self.navmenu.label_wsh_web)
-    self.fit_navmenu_item_util(self.navmenu.label_exit)
+    # self.nav_menu.anchor_exit_label.size_hint_y = None
+    # self.nav_menu.anchor_exit_label.height = self.nav_menu.height * .1
+    self.nav_menu.anchor_version.anchor_x = "right"
+    self.nav_menu.anchor_version.anchor_y = "bottom"
+
+    # self.nav_menu.anchor_version.padding = (0,0,self.nav_menu.width * .02,self.nav_menu.height * .02)
+    self.nav_menu.anchor_version.padding = (0,0,self.nav_menu.width * .02,self.nav_menu.height * .05)
+
+    # self.nav_menu.label_table_screen.font_size = menu_item_font_size
+    # self.nav_menu.label_wsh_web.font_size = menu_item_font_size
+    # self.nav_menu.label_exit.font_size = menu_item_font_size
+    self.fit_navmenu_item_util(self.nav_menu.label_act_screen)
+    self.fit_navmenu_item_util(self.nav_menu.label_table_screen)
+    self.fit_navmenu_item_util(self.nav_menu.label_wsh_web)
+    self.fit_navmenu_item_util(self.nav_menu.label_exit)
+    self.fit_navmenu_item_util(self.nav_menu.label_version)
+    # self.nav_menu.label_version.font_size = 20
 
     Clock.schedule_once(self.navmenu_sizing, .01)
 
   def navmenu_sizing(self, *args):
-    self.navmenu.label_table_screen.size = self.navmenu.label_table_screen.texture_size
-    self.navmenu.label_act_screen.size = self.navmenu.label_act_screen.texture_size
-    self.navmenu.label_wsh_web.size = self.navmenu.label_wsh_web.texture_size
-    self.navmenu.label_exit.size = self.navmenu.label_exit.texture_size
+    self.nav_menu.label_table_screen.size = self.nav_menu.label_table_screen.texture_size
+    self.nav_menu.label_act_screen.size = self.nav_menu.label_act_screen.texture_size
+    self.nav_menu.label_wsh_web.size = self.nav_menu.label_wsh_web.texture_size
+    self.nav_menu.label_exit.size = self.nav_menu.label_exit.texture_size
+    self.nav_menu.label_version.size = self.nav_menu.label_version.texture_size
 
-    menu_items_list = [self.navmenu.label_table_screen,
-      self.navmenu.label_act_screen,
-      self.navmenu.label_wsh_web,self.navmenu.label_exit]
+    menu_items_list = [self.nav_menu.label_table_screen,
+      self.nav_menu.label_act_screen,
+      self.nav_menu.label_wsh_web,self.nav_menu.label_exit]
 
     min_font_size = min([i.font_size for i in menu_items_list])
 
@@ -180,13 +199,13 @@ class ParentScreen2(Screen):
 
 
   def fit_navmenu_item_util(self, thing):
-    while thing.texture_size[0] < (self.navmenu.width * .85) and \
-      thing.texture_size[1] < (self.navmenu.height * .085):
+    while thing.texture_size[0] < (self.nav_menu.width * .85) and \
+      thing.texture_size[1] < (self.nav_menu.height * .085):
       thing.font_size += 1
       thing.texture_update()
 
-    while thing.texture_size[0] > (self.navmenu.width * .85) or \
-      thing.texture_size[1] > (self.navmenu.height * .085):
+    while thing.texture_size[0] > (self.nav_menu.width * .85) or \
+      thing.texture_size[1] > (self.nav_menu.height * .085):
       thing.font_size -= .25
       thing.texture_update()
 

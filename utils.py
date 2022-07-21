@@ -19,28 +19,31 @@ def add_activity_util(payload, login_token):
   print(response.status_code)
   return response.status_code
 
-def delete_row_util(act_type, payload, login_token):
+def delete_row_util(trigger_widget_name, login_token):
   print('delete_row util')
+  payload = {}
 
-  if act_type=='User Activity':# User activity deltee
-
+  if trigger_widget_name[:13] == 'User Activity':# User activity deltee
+    payload['activity_id'] = int(trigger_widget_name[13:])
     url_delete_activity_user = base_url + '/delete_user_activity'
     headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
     response = requests.request('DELETE',url_delete_activity_user, headers=headers, data=str(json.dumps(payload)))
 
 
-  elif act_type== 'Polar':# Polar actiivty delete
+  elif trigger_widget_name[:5]== 'Polar':# Polar actiivty delete
+    payload['activity_id'] = int(trigger_widget_name[5:])
     url_delete_activity_polar = base_url + '/delete_polar_activity'
     headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
     response = requests.request('DELETE',url_delete_activity_polar, headers=headers, data=str(json.dumps(payload)))
 
-  elif act_type == 'Oura Sleep':# Oura sleep delete
+  elif trigger_widget_name[:10] == 'Oura Sleep':# Oura sleep delete
+    payload['activity_id'] = int(trigger_widget_name[10:])
     url_delete_oura_sleep = base_url + f'/delete_oura_sleep'
     headers = {'x-access-token':login_token, 'Content-Type': 'application/json'}
     response = requests.request('DELETE',url_delete_oura_sleep, headers=headers, data=str(json.dumps(payload)))
 
   if response.status_code == 200:
-    print('deleted record type:', act_type)
+    print('deleted record type:', trigger_widget_name)
     print(payload)
   print(response.status_code)
 

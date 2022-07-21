@@ -10,7 +10,7 @@ from size_dict import size_dict
 from utils import add_activity_util
 import datetime
 
-from areyousure.areyousure import ConfirmBox
+from areyousure.areyousure import ModalNoResponse
 
 
 Builder.load_file('mainbox/mainbox.kv')
@@ -77,11 +77,6 @@ class MainBoxLayout(BoxLayout):
     self.label_act_name.size = self.label_act_name.texture_size
 
     self.anchor_email.height=self.label_email.texture_size[1]
-    # Clock.schedule_once(self.font_size_email_label,.01)
-    # print('* EMAIL SET in get_size *')
-    # print('self.label_email.width/texture[0]:', self.label_email.width, self.label_email.texture_size[0])
-    # print('self.ps1_base_width * .5:', self.ps1_base_width * .5)
-
 
     self.input_act_name.font_size=self.ps1_base_width * size_dict['input_act_name']['font_size'][self.sc]
     self.input_act_name.height = self.label_act_name.height
@@ -156,22 +151,15 @@ class MainBoxLayout(BoxLayout):
     self.anchor_submit.padding = (0,0,self.ps1_base_width * size_dict['anchor_submit']['padding-right'][self.sc],0)
 
   def add_activity(self):
-    print(self.input_date.text)
+    # print(self.input_date.text)
     month,day,year = self.input_date.text.split('/')
-    print('month,day,year::', month,day,year)
-
     date_thing = f'{year}-{int(month):02d}-{int(day):02d}'
     time_thing = datetime.datetime.strptime(self.input_time.text, '%I:%M %p').time()
-
-
-    print(dir(time_thing))
-    print('datetime_of_activity:::', date_thing +'T'+ str(time_thing))
     payload={}
     # payload['datetime_of_activity']='2022-05-21T15:31:00'
     payload['datetime_of_activity'] = date_thing +'T'+ str(time_thing)
     payload["note"]= self.input_act_note.text
     payload["source_name"]= "iOS Device App"
-    # payload1["time_stamp_utc"]= "2021-08-29T14:04:07.567861"
     payload["user_id"]= self.user_id
     payload["var_activity"]= self.input_act_name.text
     payload["time_offset"]= 120
@@ -179,17 +167,19 @@ class MainBoxLayout(BoxLayout):
     response_status = add_activity_util(payload, self.login_token)
     self.act_screen = self.parent.parent.parent
     if response_status == 200:
-      confirm_box = ConfirmBox()
+      confirm_box = ModalNoResponse(line_color = (30/255,144/255,1),
+      message = "Activity succussfully added!")
       self.act_screen.add_widget(confirm_box)
-      #clear act screen from confirm_box
 
+    elif response_status == 401:
+      self.failboxlogin = ModalNoResponse(line_color = (.5,.3,.3),
+      message = "Looks like you got logged out.\nTry closing and reopening the app.")
+      self.act_screen.add_widget(self.failboxlogin)
     else:
-      print('Soemthing went wrong...')
-      fail_box = FailBox()
-      self.act_screen.add_widget(fail_box)
-        #open somethign went wrong box with error code
-        #if 401, tell user to try to exit and log back in
-        #other wise oops maybe try later.
+      message = f"Something went wrong.\nTry again later or contact\nnick@dashanddata.com.\nstatus code:{response_status}"
+      self.failboxlogin = ModalNoResponse(line_color = (.5,.3,.3), message = message)
+      self.act_screen.add_widget(self.failboxlogin)
+
 
   def reset_screen(self):
     print('**** MainBox reset_screen calleddd ###')
@@ -199,20 +189,11 @@ class MainBoxLayout(BoxLayout):
     self.input_time.text = datetime.datetime.now().strftime("%-l:%M %p")
 
   def font_size_email_label(self,*args):
-    # while self.label_email.texture_size[0] > self.ps1_base_width * .5:
-    #   self.label_email.font_size -= .25
-    #   self.label_email.texture_update()
-    #
 
     while self.label_email.texture_size[0] > self.ps1_base_width * .9 or \
       self.label_email.texture_size[1] > self.ps1_base_height * .07:
       self.label_email.font_size -= .25
       self.label_email.texture_update()
-
-    # print('EMAIL SET in font_size_email_label *')
-    # print('self.label_email.width/texture[0]:', self.label_email.width, self.label_email.texture_size[0])
-    # print('self.ps1_base_width * .5:', self.ps1_base_width * .5)
-
 
 
 class TextInputAddName(TextInput):
